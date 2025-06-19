@@ -3,43 +3,46 @@
 import { useState } from "react";
 import Layout from "../../../components/Layout";
 import { useRouter } from "next/navigation";
-import AllPaymentTable from "./components/AllPaymentTables";
-import CompletedPaymentTable from "./components/CompletedPayment";
-import PendingPaymentTable from "./components/PendingPayment";
+import PendingPaymentTable from "./components/PendingPaymentTable";
+import CompletedPaymentTable from "./components/CompletedPaymentTable";
+ 
+import ReturnTable from "./components/ReturnPaymentTable";
 
 // Define tab key types
-type TabKey = "all" |"pending" | "completed";
+type TabKey = "pending" | "completed"   | "return";
 
-const tabs: TabKey[] = ["all", "pending", "completed"];
+const tabs: TabKey[] = ["pending", "completed",  "return"];
 
 const PaymentList = () => {
-  const [activeTab, setActiveTab] = useState<TabKey>("all");
+  const [activeTab, setActiveTab] = useState<TabKey>("pending");
 
   const router = useRouter();
 
   const counts: Record<TabKey, number> = {
-    all:0,
-    pending: 0, // Will be managed by individual components
+    pending: 0,  
     completed: 0,
+    
+    return: 0
   };
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "all":
-        return <AllPaymentTable onSidebarToggle={() => {}} />;
       case "pending":
         return <PendingPaymentTable onSidebarToggle={() => {}} />;
       case "completed":
         return <CompletedPaymentTable onSidebarToggle={() => {}} />;
+      
+      case "return":
+        return <ReturnTable onSidebarToggle={() => {}} />;
       default:
-        return <AllPaymentTable onSidebarToggle={() => {}} />;
+        return <PendingPaymentTable onSidebarToggle={() => {}} />;
     }
   };
 
   return (
-    <Layout pageTitle="Payment Management">
+    <Layout pageTitle="Pattiyal Payment Management">
       <main className="flex-1">
-         <div className="overflow-y-hidden h-[calc(100vh-43px)]">
+        <div className="overflow-y-hidden h-[calc(100vh-43px)]">
           <div className="flex justify-between items-center bg-white px-1.5 mt-[5px] ml-2 whitespace-nowrap">
             <ul className="flex flex-nowrap text-sm font-medium text-center">
               {tabs.map((tab) => (
@@ -49,14 +52,15 @@ const PaymentList = () => {
                     className={`tab ${activeTab === tab ? "bg-[#ebeff3] text-[#384551]" : "hover:text-[#6689b8] hover:bg-[#f5f7f9]"}`}
                   >
                     <span className="flex items-center gap-1">
-                      {tab === "all" && <i className="ri-list-check mr-1"></i>}
                       {tab === "pending" && <i className="ri-time-line mr-1"></i>}
                       {tab === "completed" && <i className="ri-check-line mr-1"></i>}
+                      
+                      {tab === "return" && <i className="ri-arrow-go-back-fill  mr-1"></i>}
                       {tab.charAt(0).toUpperCase() + tab.slice(1)}
                       {activeTab === tab && (
                         <>
                           <span className="ml-2 counter-badge">{counts[tab]}</span>
-                          <i className="ri-close-fill font-bold px-1 rounded hover:bg-[#dce0e5]" onClick={(e) => { e.stopPropagation(); setActiveTab("all"); }}></i>
+                          <i className="ri-close-fill font-bold px-1 rounded hover:bg-[#dce0e5]" onClick={(e) => { e.stopPropagation(); setActiveTab("pending"); }}></i>
                         </>
                       )}
                     </span>
@@ -88,7 +92,7 @@ const PaymentList = () => {
             </div>
           </div>
 
-          {/* Render the active tab content */}
+         
           {renderTabContent()}
         </div>
       </main>
@@ -97,3 +101,4 @@ const PaymentList = () => {
 };
 
 export default PaymentList;
+ 

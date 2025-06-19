@@ -1,129 +1,178 @@
-"use client";
-
+ "use client";
+ import DatePicker from "@/app/utils/datepicker";
 import { useEffect, useState } from "react";
-import { apiCall } from "../../../../utils/api";
-import DatePicker from "@/app/utils/datepicker";
+// import { apiCall } from "../../../../utils/api";  
 
-interface CompletedPattiyal {
+interface PattiyalReturnPayment {
   id: number;
-  traderName: string;
-  date: string;
+  sNo: number;
+  pattiyalNo: string;
+  waymentNo: string;
+  vehicleNo: string;
   amount: string;
   bankName: string;
   accountNumber: string;
   ifscCode: string;
+  returnDate: string;  
+  reason: string;  
 }
 
-interface CompletedPattiyalTableProps {
+interface ReturnPaymentTableProps {
   onSidebarToggle: () => void;
 }
 
-const CompletedPaymentTable: React.FC<CompletedPattiyalTableProps> = ({ onSidebarToggle }) => {
-  const [completedPattiyals, setCompletedPattiyals] = useState<CompletedPattiyal[]>([]);
+const ReturnPaymentTable: React.FC<ReturnPaymentTableProps> = ({ onSidebarToggle }) => {
+  const [pattiyalReturnPayments, setPattiyalReturnPayments] = useState<PattiyalReturnPayment[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
+  const [toDate, setToDate] = useState<Date | undefined>(undefined);
+
   // Filter states
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<any>({});
   const [localFilters, setLocalFilters] = useState<any>({});
-const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
-  const [toDate, setToDate] = useState<Date | undefined>(undefined);
-  const fetchCompletedPattiyals = async () => {
+
+  // Static data for Pattiyal Return Payments
+  const staticPattiyalReturnPayments: PattiyalReturnPayment[] = [
+    {
+      id: 201,
+      sNo: 1,
+      pattiyalNo: "PP2024010",
+      waymentNo: "WM2024020",
+      vehicleNo: "TN07K4321",
+      amount: "5000.00",
+      bankName: "State Bank of India",
+      accountNumber: "XXXXXXXXXXXX5432",
+      ifscCode: "SBIN0000001",
+      returnDate: "2024-06-15",
+      reason: "Incorrect Account Number",
+    },
+    {
+      id: 202,
+      sNo: 2,
+      pattiyalNo: "PP2024011",
+      waymentNo: "WM2024021",
+      vehicleNo: "KA04L8765",
+      amount: "7500.50",
+      bankName: "HDFC Bank",
+      accountNumber: "XXXXXXXXXXXX9876",
+      ifscCode: "HDFC0000002",
+      returnDate: "2024-06-14",
+      reason: "Account Closed",
+    },
+    {
+      id: 203,
+      sNo: 3,
+      pattiyalNo: "PP2024012",
+      waymentNo: "WM2024022",
+      vehicleNo: "KL05M1098",
+      amount: "2000.00",
+      bankName: "ICICI Bank",
+      accountNumber: "XXXXXXXXXXXX2109",
+      ifscCode: "ICIC0000003",
+      returnDate: "2024-06-13",
+      reason: "Beneficiary Name Mismatch",
+    },
+    {
+      id: 204,
+      sNo: 4,
+      pattiyalNo: "PP2024013",
+      waymentNo: "WM2024023",
+      vehicleNo: "AP06N5544",
+      amount: "12000.75",
+      bankName: "Axis Bank",
+      accountNumber: "XXXXXXXXXXXX7788",
+      ifscCode: "UTIB0000004",
+      returnDate: "2024-06-12",
+      reason: "Transaction Failed - Bank Error",
+    },
+    {
+      id: 205,
+      sNo: 5,
+      pattiyalNo: "PP2024014",
+      waymentNo: "WM2024024",
+      vehicleNo: "TS08P2233",
+      amount: "3000.00",
+      bankName: "Canara Bank",
+      accountNumber: "XXXXXXXXXXXX6655",
+      ifscCode: "CNRB0000005",
+      returnDate: "2024-06-11",
+      reason: "Account Frozen",
+    },
+  ];
+
+  const fetchPattiyalReturnPayments = async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Mock data for completed pattiyals
-      const mockData = [
-        {
-          id: 1,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "15000.00",
-          bankName: "State Bank of India",
-          accountNumber: "XXXXXXXXXXXX1234",
-          ifscCode: "SBIN0000001",
-        },
-        {
-          id: 2,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "22500.50",
-          bankName: "HDFC Bank",
-          accountNumber: "XXXXXXXXXXXX5678",
-          ifscCode: "HDFC0000002",
-        },
-        {
-          id: 3,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "10000.00",
-          bankName: "ICICI Bank",
-          accountNumber: "XXXXXXXXXXXX9101",
-          ifscCode: "ICIC0000003",
-        },
-        {
-          id: 4,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "30000.75",
-          bankName: "Axis Bank",
-          accountNumber: "XXXXXXXXXXXX1122",
-          ifscCode: "UTIB0000004",
-        },
-        {
-          id: 5,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "5000.00",
-          bankName: "Canara Bank",
-          accountNumber: "XXXXXXXXXXXX3344",
-          ifscCode: "CNRB0000005",
-        },
-        {
-          id: 6,
-          traderName: "John Doe",
-          date:"25//10/2024",
-          amount: "30000.75",
-          bankName: "Axis Bank",
-          accountNumber: "XXXXXXXXXXXX1122",
-          ifscCode: "UTIB0000004",
-        },
-        {
-          id: 7,
-          traderName: "John Doe",
-          date:"25//10/2024",
-          amount: "5000.00",
-          bankName: "Canara Bank",
-          accountNumber: "XXXXXXXXXXXX3344",
-          ifscCode: "CNRB0000005",
-        },
-      ];
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setCompletedPattiyals(mockData);
-      
+
+      // Commented out the API call for actual data fetching
+      /*
+      const payload = {
+        token: "getReturnPattiyalPaymentsList", // Assuming a specific token for return payments
+        data: {
+          columns: [
+            "id",
+            "no",
+            "createdAt", // Could be return date from API
+            "pattiiyalNo",
+            "vehicleNumber",
+            "amount",
+            "bankName",
+            "accountNumber",
+            "ifscCode",
+            "returnDate", // API field for return date
+            "reason" // API field for return reason
+          ],
+          status: "returned" // Or whatever status indicates a return
+        }
+      };
+
+      const response = await apiCall(payload);
+
+      if (response?.status === "success" && response?.data?.length > 0) {
+        const mappedData = response.data.map((item: any) => ({
+          id: parseInt(item.id),
+          sNo: item.sNo || 'N/A',
+          pattiyalNo: item.no || 'N/A',
+          waymentNo: item.pattiiyalNo || 'N/A',
+          vehicleNo: item.vehicleNumber || 'N/A',
+          amount: item.amount || 'N/A',
+          bankName: item.bankName || 'N/A',
+          accountNumber: item.accountNumber || 'N/A',
+          ifscCode: item.ifscCode || 'N/A',
+          returnDate: item.returnDate ? new Date(item.returnDate).toLocaleDateString('en-IN') : 'N/A',
+          reason: item.reason || 'N/A',
+        }));
+        setPattiyalReturnPayments(mappedData);
+      } else {
+        setPattiyalReturnPayments([]);
+      }
+      */
+
+      // Using static data for demonstration
+      setPattiyalReturnPayments(staticPattiyalReturnPayments);
+
     } catch (err) {
-      console.error("Error fetching completed pattiyals:", err);
-      setError("Failed to fetch completed pattiyals");
-      setCompletedPattiyals([]);
+      console.error("Error fetching return pattiyal payments:", err);
+      setError("Error loading static data (simulated error if API call were active)");
+      setPattiyalReturnPayments([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCompletedPattiyals();
+    fetchPattiyalReturnPayments();
   }, []);
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setSelectAll(checked);
-    setSelectedIds(checked ? completedPattiyals.map((p) => p.id) : []);
+    setSelectedIds(checked ? pattiyalReturnPayments.map((p) => p.id) : []);
   };
 
   const handleCheckboxChange = (id: number) => {
@@ -131,7 +180,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   };
 
   const handleRefresh = () => {
-    fetchCompletedPattiyals();
+    fetchPattiyalReturnPayments();
   };
 
   // Filter handlers
@@ -160,8 +209,8 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   };
 
   useEffect(() => {
-    setSelectAll(completedPattiyals.length > 0 && selectedIds.length === completedPattiyals.length);
-  }, [selectedIds, completedPattiyals]);
+    setSelectAll(pattiyalReturnPayments.length > 0 && selectedIds.length === pattiyalReturnPayments.length);
+  }, [selectedIds, pattiyalReturnPayments]);
 
   if (loading) {
     return (
@@ -169,7 +218,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
         <div className="relative">
           <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
         </div>
-        <div className="text-lg font-medium text-gray-700">Loading Completed Payment...</div>
+        <div className="text-lg font-medium text-gray-700">Loading return pattiyal payments...</div>
         <div className="text-sm text-gray-500">Please wait while we fetch the data</div>
       </div>
     );
@@ -177,19 +226,38 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64 flex-col">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mx-2 mb-2">
-          <span className="block sm:inline">{error}</span>
-          <button onClick={handleRefresh} className="ml-2 underline hover:no-underline">Retry</button>
+      <div className="flex items-center justify-center h-64 flex-col space-y-4">
+        <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-lg mx-4 max-w-2xl">
+          <div className="flex items-center mb-2">
+            <i className="ri-error-warning-line text-red-600 text-xl mr-2"></i>
+            <h3 className="font-semibold text-lg">Connection Error</h3>
+          </div>
+          <p className="text-sm mb-3">{error}</p>
+          <div className="text-xs text-red-600 mb-3">
+            <strong>Possible solutions:</strong>
+            <ul className="list-disc list-inside mt-1 space-y-1">
+              <li>Check if the API server is running and accessible</li>
+              <li>Verify the API endpoint URL is correct</li>
+              <li>Check for CORS configuration on the server</li>
+              <li>Ensure you have internet connectivity</li>
+            </ul>
+          </div>
+          <button
+            onClick={handleRefresh}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
+          >
+            <i className="ri-refresh-line mr-1"></i>
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
-  if (completedPattiyals.length === 0) {
+  if (pattiyalReturnPayments.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-500">No completed pattiyals available</div>
+        <div className="text-lg text-gray-500">No return pattiyal payments available</div>
       </div>
     );
   }
@@ -213,7 +281,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                 </button>
               </div>
 
-              <button className="btn-sm btn-visible-hover" id="bulkActionsBtn" onClick={() => { setSelectAll(true); setSelectedIds(completedPattiyals.map((p) => p.id)); }}>
+              <button className="btn-sm btn-visible-hover" id="bulkActionsBtn" onClick={() => { setSelectAll(true); setSelectedIds(pattiyalReturnPayments.map((p) => p.id)); }}>
                 <i className="ri-stack-fill mr-1"></i>
                 Bulk Actions
               </button>
@@ -247,7 +315,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
         </div>
 
         <div className="flex items-center relative space-x-2">
-          <input className="form-control !h-[31px]" type="text" placeholder="Search Trader Name" />
+          <input className="form-control !h-[31px]" type="text" placeholder="Enter Pattiyal / Wayment Number" />
           <button className="btn-sm btn-visible-hover" onClick={handleFilterToggle}>
             <i className="ri-sort-desc"></i>
           </button>
@@ -258,7 +326,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
       <div className="bg-[#ebeff3]">
         {selectedIds.length > 1 && (
           <div className="fixed top-42 left-1/2 transform -translate-x-1/2 z-50 badge-selected">
-            {selectedIds.length} Completed Payments selected
+            {selectedIds.length} Pattiyal Return Payments selected
           </div>
         )}
 
@@ -275,19 +343,24 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                       <span>S.No.</span>
                     </div>
                   </th>
-                   <th className="th-cell">
+                  <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Trader Name</span>
+                      <span>Pattiyal No</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Date</span>
+                      <span>Wayment No</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
-                
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Vehicle No</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
                       <span>Amount</span>
@@ -306,16 +379,28 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
-                  <th className="last-th-cell">
+                  <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
                       <span>IFSC Code</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Return Date</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  <th className="last-th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Reason</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {completedPattiyals.map((payment, index) => (
+                {pattiyalReturnPayments.map((payment, index) => (
                   <tr key={payment.id} className={`tr-hover group ${selectedIds.includes(payment.id) ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]" : ""}`}>
                     <td className="td-cell">
                       <input type="checkbox" className="form-check" checked={selectedIds.includes(payment.id)} onChange={() => handleCheckboxChange(payment.id)} />
@@ -326,13 +411,15 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                         <i className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100"></i>
                       </span>
                     </td>
-                    <td className="td-cell">{payment.traderName}</td>
-                    <td className="td-cell">{payment.date}</td>
+                    <td className="td-cell">{payment.pattiyalNo}</td>
+                    <td className="td-cell">{payment.waymentNo}</td>
+                    <td className="td-cell">{payment.vehicleNo}</td>
                     <td className="td-cell">{payment.amount}</td>
                     <td className="td-cell">{payment.bankName}</td>
                     <td className="td-cell">{payment.accountNumber}</td>
                     <td className="td-cell">{payment.ifscCode}</td>
-                    
+                    <td className="td-cell">{payment.returnDate}</td>
+                    <td className="last-td-cell">{payment.reason}</td>
                   </tr>
                 ))}
               </tbody>
@@ -344,14 +431,16 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
       {/* Footer */}
       <div className="bg-[#ebeff3] py-3 h-[56.9px] px-4 flex items-center justify-start">
         <span className="text-sm">
-          Showing <span className="text-red-600">{completedPattiyals.length}</span> of <span className="text-blue-600">{completedPattiyals.length}</span>
+          Showing <span className="text-red-600">{pattiyalReturnPayments.length}</span> of <span className="text-blue-600">{pattiyalReturnPayments.length}</span>
         </span>
       </div>
 
       {/* Filter Modal */}
       <div
         className={`fixed inset-0 z-50 flex justify-end transition-opacity duration-300 ${
-          isFilterOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          isFilterOpen
+            ? "opacity-100"
+            : "opacity-0 pointer-events-none"
         }`}
       >
         {/* Backdrop */}
@@ -368,13 +457,16 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
           {/* Header */}
           <div className="filter-header">
             <h5 className="">Add Filters</h5>
-            <button onClick={handleFilterClose} className="cursor-pointer">
+            <button
+              onClick={handleFilterClose}
+              className="cursor-pointer"
+            >
               <i className="ri-close-line"></i>
             </button>
           </div>
           {/* Scrollable Content */}
           <div className="p-4 overflow-y-auto flex-1">
-            <div className="mb-4">
+          <div className="mb-4">
               <div className="flex flex-col md:flex-row gap-2">
                 <div className="w-35">
                   <label className="filter-label block mb-1">From Date</label>
@@ -406,7 +498,10 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
             </div>
           </div>
           <div className="p-2 border-t border-[#dee2e6] flex justify-end gap-2">
-            <button className="btn-sm btn-light" onClick={handleClearFilters}>
+            <button
+              className="btn-sm btn-light"
+              onClick={handleClearFilters}
+            >
               Reset All
             </button>
             <button
@@ -425,4 +520,4 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   );
 };
 
-export default CompletedPaymentTable; 
+export default ReturnPaymentTable;

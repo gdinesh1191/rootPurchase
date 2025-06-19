@@ -1,129 +1,172 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import { apiCall } from "../../../../utils/api";
 import DatePicker from "@/app/utils/datepicker";
+import { useEffect, useState } from "react";
+// import { apiCall } from "../../../../utils/api"; // Commented out as we're using static data for now
 
-interface CompletedPattiyal {
+interface PattiyalPayment {
   id: number;
-  traderName: string;
-  date: string;
-  amount: string;
+  sNo: number;
+  pattiyalNo: string;
+  waymentNo: string;  
+  vehicleNo: string;
+  amount: string;  
   bankName: string;
   accountNumber: string;
   ifscCode: string;
 }
 
-interface CompletedPattiyalTableProps {
+interface PendingPaymentTableProps {
   onSidebarToggle: () => void;
 }
 
-const CompletedPaymentTable: React.FC<CompletedPattiyalTableProps> = ({ onSidebarToggle }) => {
-  const [completedPattiyals, setCompletedPattiyals] = useState<CompletedPattiyal[]>([]);
+const PendingPaymentTable: React.FC<PendingPaymentTableProps> = ({ onSidebarToggle }) => {
+  const [pattiyalPayments, setPattiyalPayments] = useState<PattiyalPayment[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // Filter states
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
+  const [toDate, setToDate] = useState<Date | undefined>(undefined);
+
+   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<any>({});
   const [localFilters, setLocalFilters] = useState<any>({});
-const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
-  const [toDate, setToDate] = useState<Date | undefined>(undefined);
-  const fetchCompletedPattiyals = async () => {
+
+  // Static data for Pattiyal Payments
+  const staticPattiyalPayments: PattiyalPayment[] = [
+    {
+      id: 1,
+      sNo: 1,
+      pattiyalNo: "PP2024001",
+      waymentNo: "WM2024005",
+      vehicleNo: "TN01A1234",
+      amount: "15000.00",
+      bankName: "State Bank of India",
+      accountNumber: "XXXXXXXXXXXX1234",
+      ifscCode: "SBIN0000001",
+    },
+    {
+      id: 2,
+      sNo: 2,
+      pattiyalNo: "PP2024002",
+      waymentNo: "WM2024006",
+      vehicleNo: "KA02B5678",
+      amount: "22500.50",
+      bankName: "HDFC Bank",
+      accountNumber: "XXXXXXXXXXXX5678",
+      ifscCode: "HDFC0000002",
+    },
+    {
+      id: 3,
+      sNo: 3,
+      pattiyalNo: "PP2024003",
+      waymentNo: "WM2024007",
+      vehicleNo: "KL03C9101",
+      amount: "10000.00",
+      bankName: "ICICI Bank",
+      accountNumber: "XXXXXXXXXXXX9101",
+      ifscCode: "ICIC0000003",
+    },
+    {
+      id: 4,
+      sNo: 4,
+      pattiyalNo: "PP2024004",
+      waymentNo: "WM2024008",
+      vehicleNo: "AP04D1122",
+      amount: "30000.75",
+      bankName: "Axis Bank",
+      accountNumber: "XXXXXXXXXXXX1122",
+      ifscCode: "UTIB0000004",
+    },
+    {
+      id: 5,
+      sNo: 5,
+      pattiyalNo: "PP2024005",
+      waymentNo: "WM2024009",
+      vehicleNo: "TS05E3344",
+      amount: "5000.00",
+      bankName: "Canara Bank",
+      accountNumber: "XXXXXXXXXXXX3344",
+      ifscCode: "CNRB0000005",
+    },
+  ];
+
+  const fetchPattiyalPayments = async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Mock data for completed pattiyals
-      const mockData = [
-        {
-          id: 1,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "15000.00",
-          bankName: "State Bank of India",
-          accountNumber: "XXXXXXXXXXXX1234",
-          ifscCode: "SBIN0000001",
-        },
-        {
-          id: 2,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "22500.50",
-          bankName: "HDFC Bank",
-          accountNumber: "XXXXXXXXXXXX5678",
-          ifscCode: "HDFC0000002",
-        },
-        {
-          id: 3,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "10000.00",
-          bankName: "ICICI Bank",
-          accountNumber: "XXXXXXXXXXXX9101",
-          ifscCode: "ICIC0000003",
-        },
-        {
-          id: 4,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "30000.75",
-          bankName: "Axis Bank",
-          accountNumber: "XXXXXXXXXXXX1122",
-          ifscCode: "UTIB0000004",
-        },
-        {
-          id: 5,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "5000.00",
-          bankName: "Canara Bank",
-          accountNumber: "XXXXXXXXXXXX3344",
-          ifscCode: "CNRB0000005",
-        },
-        {
-          id: 6,
-          traderName: "John Doe",
-          date:"25//10/2024",
-          amount: "30000.75",
-          bankName: "Axis Bank",
-          accountNumber: "XXXXXXXXXXXX1122",
-          ifscCode: "UTIB0000004",
-        },
-        {
-          id: 7,
-          traderName: "John Doe",
-          date:"25//10/2024",
-          amount: "5000.00",
-          bankName: "Canara Bank",
-          accountNumber: "XXXXXXXXXXXX3344",
-          ifscCode: "CNRB0000005",
-        },
-      ];
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setCompletedPattiyals(mockData);
-      
+
+      // Commented out the API call
+      /*
+      const payload = {
+        token: "getPattiyalList",
+        data: {
+          columns: [
+            "id",
+            "no",
+            "createdAt",
+            "pattiiyalNo",
+            "vehicleNumber",
+            "partLoad",
+            "inTime",
+            "outTime",
+            "pointApprove",
+            "rateApprove",
+            "MaterialType",
+            "name",
+            "firstWeight",
+            "secondWeight",
+            "netWeight",
+            "billWeight"
+          ],
+          status: "pending"
+        }
+      };
+
+      const response = await apiCall(payload);
+
+      if (response?.status === "success" && response?.data?.length > 0) {
+        const mappedData = response.data.map((item: any) => ({
+          id: parseInt(item.id),
+          date: item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-IN') : 'N/A',
+          weightNo: item.pattiiyalNo || 'N/A',
+          pattiyalNo: item.no || 'N/A',
+          vehicleNo: item.vehicleNumber || 'N/A',
+          partLoad: item.partLoad === "1" ? "Part Load" : "Full Load",
+          inTime: item.inTime || 'N/A',
+          outTime: item.outTime || 'N/A',
+          pointApproval: item.pointApprove === "1" ? "Approved" : "Pending",
+          rateApproval: item.rateApprove === "1" ? "Approved" : "Pending",
+          pattiyalApproval: (item.pointApprove === "1" && item.rateApprove === "1") ? "Approved" : "Pending"
+        }));
+        setPattiyalPayments(mappedData);
+      } else {
+        setPattiyalPayments([]);
+      }
+      */
+
+      // Using static data
+      setPattiyalPayments(staticPattiyalPayments);
+
     } catch (err) {
-      console.error("Error fetching completed pattiyals:", err);
-      setError("Failed to fetch completed pattiyals");
-      setCompletedPattiyals([]);
+      console.error("Error fetching pattiyal payments:", err);
+      // const errorMessage = err instanceof Error ? err.message : "Failed to fetch pattiyal payments";
+      // setError(errorMessage);
+      setError("Error loading static data (simulated error if uncommented for testing)"); // Simulate error for static data
+      setPattiyalPayments([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCompletedPattiyals();
+    fetchPattiyalPayments();
   }, []);
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setSelectAll(checked);
-    setSelectedIds(checked ? completedPattiyals.map((p) => p.id) : []);
+    setSelectedIds(checked ? pattiyalPayments.map((p) => p.id) : []);
   };
 
   const handleCheckboxChange = (id: number) => {
@@ -131,7 +174,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   };
 
   const handleRefresh = () => {
-    fetchCompletedPattiyals();
+    fetchPattiyalPayments();
   };
 
   // Filter handlers
@@ -160,8 +203,8 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   };
 
   useEffect(() => {
-    setSelectAll(completedPattiyals.length > 0 && selectedIds.length === completedPattiyals.length);
-  }, [selectedIds, completedPattiyals]);
+    setSelectAll(pattiyalPayments.length > 0 && selectedIds.length === pattiyalPayments.length);
+  }, [selectedIds, pattiyalPayments]);
 
   if (loading) {
     return (
@@ -169,7 +212,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
         <div className="relative">
           <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
         </div>
-        <div className="text-lg font-medium text-gray-700">Loading Completed Payment...</div>
+        <div className="text-lg font-medium text-gray-700">Loading pattiyal payments...</div>
         <div className="text-sm text-gray-500">Please wait while we fetch the data</div>
       </div>
     );
@@ -177,19 +220,38 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64 flex-col">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mx-2 mb-2">
-          <span className="block sm:inline">{error}</span>
-          <button onClick={handleRefresh} className="ml-2 underline hover:no-underline">Retry</button>
+      <div className="flex items-center justify-center h-64 flex-col space-y-4">
+        <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-lg mx-4 max-w-2xl">
+          <div className="flex items-center mb-2">
+            <i className="ri-error-warning-line text-red-600 text-xl mr-2"></i>
+            <h3 className="font-semibold text-lg">Connection Error</h3>
+          </div>
+          <p className="text-sm mb-3">{error}</p>
+          <div className="text-xs text-red-600 mb-3">
+            <strong>Possible solutions:</strong>
+            <ul className="list-disc list-inside mt-1 space-y-1">
+              <li>Check if the API server is running and accessible</li>
+              <li>Verify the API endpoint URL is correct</li>
+              <li>Check for CORS configuration on the server</li>
+              <li>Ensure you have internet connectivity</li>
+            </ul>
+          </div>
+          <button
+            onClick={handleRefresh}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
+          >
+            <i className="ri-refresh-line mr-1"></i>
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
-  if (completedPattiyals.length === 0) {
+  if (pattiyalPayments.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-500">No completed pattiyals available</div>
+        <div className="text-lg text-gray-500">No pattiyal payments available</div>
       </div>
     );
   }
@@ -213,7 +275,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                 </button>
               </div>
 
-              <button className="btn-sm btn-visible-hover" id="bulkActionsBtn" onClick={() => { setSelectAll(true); setSelectedIds(completedPattiyals.map((p) => p.id)); }}>
+              <button className="btn-sm btn-visible-hover" id="bulkActionsBtn" onClick={() => { setSelectAll(true); setSelectedIds(pattiyalPayments.map((p) => p.id)); }}>
                 <i className="ri-stack-fill mr-1"></i>
                 Bulk Actions
               </button>
@@ -247,7 +309,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
         </div>
 
         <div className="flex items-center relative space-x-2">
-          <input className="form-control !h-[31px]" type="text" placeholder="Search Trader Name" />
+          <input className="form-control !h-[31px]" type="text" placeholder="Enter Pattiyal / Wayment Number" />
           <button className="btn-sm btn-visible-hover" onClick={handleFilterToggle}>
             <i className="ri-sort-desc"></i>
           </button>
@@ -258,7 +320,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
       <div className="bg-[#ebeff3]">
         {selectedIds.length > 1 && (
           <div className="fixed top-42 left-1/2 transform -translate-x-1/2 z-50 badge-selected">
-            {selectedIds.length} Completed Payments selected
+            {selectedIds.length} Pattiyals Payment selected
           </div>
         )}
 
@@ -275,19 +337,24 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                       <span>S.No.</span>
                     </div>
                   </th>
-                   <th className="th-cell">
+                  <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Trader Name</span>
+                      <span>Pattiyal No</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Date</span>
+                      <span>Wayment No</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
-                
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Vehicle No</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
                       <span>Amount</span>
@@ -315,7 +382,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                 </tr>
               </thead>
               <tbody>
-                {completedPattiyals.map((payment, index) => (
+                {pattiyalPayments.map((payment, index) => (
                   <tr key={payment.id} className={`tr-hover group ${selectedIds.includes(payment.id) ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]" : ""}`}>
                     <td className="td-cell">
                       <input type="checkbox" className="form-check" checked={selectedIds.includes(payment.id)} onChange={() => handleCheckboxChange(payment.id)} />
@@ -326,13 +393,13 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                         <i className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100"></i>
                       </span>
                     </td>
-                    <td className="td-cell">{payment.traderName}</td>
-                    <td className="td-cell">{payment.date}</td>
+                    <td className="td-cell">{payment.pattiyalNo}</td>
+                    <td className="td-cell">{payment.waymentNo}</td>
+                    <td className="td-cell">{payment.vehicleNo}</td>
                     <td className="td-cell">{payment.amount}</td>
                     <td className="td-cell">{payment.bankName}</td>
                     <td className="td-cell">{payment.accountNumber}</td>
-                    <td className="td-cell">{payment.ifscCode}</td>
-                    
+                    <td className="last-td-cell">{payment.ifscCode}</td>
                   </tr>
                 ))}
               </tbody>
@@ -344,14 +411,16 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
       {/* Footer */}
       <div className="bg-[#ebeff3] py-3 h-[56.9px] px-4 flex items-center justify-start">
         <span className="text-sm">
-          Showing <span className="text-red-600">{completedPattiyals.length}</span> of <span className="text-blue-600">{completedPattiyals.length}</span>
+          Showing <span className="text-red-600">{pattiyalPayments.length}</span> of <span className="text-blue-600">{pattiyalPayments.length}</span>
         </span>
       </div>
 
       {/* Filter Modal */}
       <div
         className={`fixed inset-0 z-50 flex justify-end transition-opacity duration-300 ${
-          isFilterOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          isFilterOpen
+            ? "opacity-100"
+            : "opacity-0 pointer-events-none"
         }`}
       >
         {/* Backdrop */}
@@ -368,13 +437,16 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
           {/* Header */}
           <div className="filter-header">
             <h5 className="">Add Filters</h5>
-            <button onClick={handleFilterClose} className="cursor-pointer">
+            <button
+              onClick={handleFilterClose}
+              className="cursor-pointer"
+            >
               <i className="ri-close-line"></i>
             </button>
           </div>
           {/* Scrollable Content */}
           <div className="p-4 overflow-y-auto flex-1">
-            <div className="mb-4">
+          <div className="mb-4">
               <div className="flex flex-col md:flex-row gap-2">
                 <div className="w-35">
                   <label className="filter-label block mb-1">From Date</label>
@@ -406,7 +478,10 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
             </div>
           </div>
           <div className="p-2 border-t border-[#dee2e6] flex justify-end gap-2">
-            <button className="btn-sm btn-light" onClick={handleClearFilters}>
+            <button
+              className="btn-sm btn-light"
+              onClick={handleClearFilters}
+            >
               Reset All
             </button>
             <button
@@ -425,4 +500,4 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   );
 };
 
-export default CompletedPaymentTable; 
+export default PendingPaymentTable;

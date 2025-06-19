@@ -3,6 +3,7 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import Layout from "../../../components/Layout";
 import useInputValidation from "@/app/utils/inputValidations";
+import DatePicker from "@/app/utils/datepicker";
 
 // Type definitions
 interface BankDetails {
@@ -67,6 +68,7 @@ const Input: React.FC<InputProps> = ({
 
 export default function NewPayment() {
   const [activeTab, setActiveTab] = useState("details");
+const [date, setDate] = useState<Date | undefined>(undefined);
 
   const customerDetails = [
     { label: "Customer Name", value: "John Cena", class: "text-gray-800" },
@@ -267,7 +269,7 @@ export default function NewPayment() {
       <div className="min-h-screen">
         <main id="main-content" className="flex-1">
           <div className="flex-1 overflow-y-auto h-[calc(100vh-103px)]">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} autoComplete="off">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-4 py-6">
                 <div className="space-y-6 lg:border-r lg:border-gray-300 lg:pr-4">
                   {/* Trader Info Block */}
@@ -277,7 +279,16 @@ export default function NewPayment() {
                     </h2>
 
                     <FormField label="Date" required>
-                      <Input name="date" type="date" data-validate="required" />
+                      <DatePicker
+                    id="date"
+                    name="date"
+                    placeholder="Select date"
+                    selected={date}
+                    onChange={setDate}
+                    // Max date for "From Date" is "To Date" (if set), otherwise no max.
+                   
+                    className="w-full"
+                  />
                     </FormField>
 
                     <FormField label="Trader's Name" required>

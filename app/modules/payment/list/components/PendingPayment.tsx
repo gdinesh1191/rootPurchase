@@ -2,19 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { apiCall } from "../../../../utils/api";
+import DatePicker from "@/app/utils/datepicker";
 
 interface PendingPattiyal {
   id: number;
-  date: string;
-  weightNo: string;
-  pattiyalNo: string;
-  vehicleNo: string;
-  partLoad: string;
-  inTime: string;
-  outTime: string;
-  pointApproval: string;
-  rateApproval: string;
-  pattiyalApproval: string;
+  traderName: string;
+ date: string; // Assuming date is in string format, adjust as needed
+  amount: string;
+  bankName: string;
+  accountNumber: string;
+  ifscCode: string;
 }
 
 interface PendingPattiyalTableProps {
@@ -32,58 +29,89 @@ const PendingPaymentTable: React.FC<PendingPattiyalTableProps> = ({ onSidebarTog
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<any>({});
   const [localFilters, setLocalFilters] = useState<any>({});
-
+const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
+  const [toDate, setToDate] = useState<Date | undefined>(undefined);
   const fetchPendingPattiyals = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const payload = {
-        token: "getPattiyalList",
-        data: { 
-          columns: [
-            "id",
-            "no",
-            "createdAt",
-            "pattiiyalNo",
-            "vehicleNumber",
-            "partLoad",
-            "inTime",
-            "outTime",
-            "pointApprove",
-            "rateApprove",
-            "MaterialType",
-            "name",
-            "firstWeight",
-            "secondWeight",
-            "netWeight",
-            "billWeight"
-          ],
-          status: "pending"
-        }
-      };
-      
-      const response = await apiCall(payload);
-      
-      if (response?.status === "success" && response?.data?.length > 0) {
-        // Map API response to component interface
-        const mappedData = response.data.map((item: any) => ({
-          id: parseInt(item.id),
-          date: item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-IN') : 'N/A',
-          weightNo: item.pattiiyalNo || 'N/A',
-          pattiyalNo: item.no || 'N/A',
-          vehicleNo: item.vehicleNumber || 'N/A',
-          partLoad: item.partLoad === "1" ? "Part Load" : "Full Load",
-          inTime: item.inTime || 'N/A',
-          outTime: item.outTime || 'N/A',
-          pointApproval: item.pointApprove === "1" ? "Approved" : "Pending",
-          rateApproval: item.rateApprove === "1" ? "Approved" : "Pending",
-          pattiyalApproval: (item.pointApprove === "1" && item.rateApprove === "1") ? "Approved" : "Pending"
-        }));
-        setPendingPattiyals(mappedData);
-      } else {
-        setPendingPattiyals([]);
-      }
+      const mockData = [
+        {
+          id: 1,
+          traderName: "John Doe",
+          date:"12/05/2025",
+          amount: "15000.00",
+          bankName: "State Bank of India",
+          accountNumber: "XXXXXXXXXXXX1234",
+          ifscCode: "SBIN0000001",
+        },
+        {
+          id: 2,
+          traderName: "John Doe",
+          date:"12/05/2025",
+          amount: "22500.50",
+          bankName: "HDFC Bank",
+          accountNumber: "XXXXXXXXXXXX5678",
+          ifscCode: "HDFC0000002",
+        },
+        {
+          id: 3,
+          traderName: "John Doe",
+          date:"12/05/2025",
+          amount: "10000.00",
+          bankName: "ICICI Bank",
+          accountNumber: "XXXXXXXXXXXX9101",
+          ifscCode: "ICIC0000003",
+        },
+        {
+          id: 4,
+          traderName: "John Doe",
+          date:"12/05/2025",
+          amount: "30000.75",
+          bankName: "Axis Bank",
+          accountNumber: "XXXXXXXXXXXX1122",
+          ifscCode: "UTIB0000004",
+        },
+        {
+          id: 5,
+          traderName: "John Doe",
+          date:"12/05/2025",
+          amount: "5000.00",
+          bankName: "Canara Bank",
+          accountNumber: "XXXXXXXXXXXX3344",
+          ifscCode: "CNRB0000005",
+        },
+        {
+          id: 6,
+          traderName: "John Doe",
+          date:"25//10/2024",
+          amount: "15000.00",
+          bankName: "State Bank of India",
+          accountNumber: "XXXXXXXXXXXX1234",
+          ifscCode: "SBIN0000001",
+        },
+        {
+          id: 7,
+          traderName: "John Doe",
+          date:"25//10/2024",
+          amount: "22500.50",
+          bankName: "HDFC Bank",
+          accountNumber: "XXXXXXXXXXXX5678",
+          ifscCode: "HDFC0000002",
+        },
+        {
+          id: 8,
+          traderName: "John Doe",
+          date:"25//10/2024",
+          amount: "10000.00",
+          bankName: "ICICI Bank",
+          accountNumber: "XXXXXXXXXXXX9101",
+          ifscCode: "ICIC0000003",
+        },
+      ];
+      await new Promise(resolve => setTimeout(resolve, 500));
+      setPendingPattiyals(mockData);
     } catch (err) {
       console.error("Error fetching pending pattiyals:", err);
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch pending pattiyals";
@@ -244,7 +272,7 @@ const PendingPaymentTable: React.FC<PendingPattiyalTableProps> = ({ onSidebarTog
         </div>
 
         <div className="flex items-center relative space-x-2">
-          <input className="form-control !h-[31px]" type="text" placeholder="Enter Pattiyal Number" />
+          <input className="form-control !h-[31px]" type="text" placeholder="Search Trader Name" />
           <button className="btn-sm btn-visible-hover" onClick={handleFilterToggle}>
             <i className="ri-sort-desc"></i>
           </button>
@@ -255,7 +283,7 @@ const PendingPaymentTable: React.FC<PendingPattiyalTableProps> = ({ onSidebarTog
       <div className="bg-[#ebeff3]">
         {selectedIds.length > 1 && (
           <div className="fixed top-42 left-1/2 transform -translate-x-1/2 z-50 badge-selected">
-            {selectedIds.length} Pattiyals selected
+            {selectedIds.length} Pending Payments selected
           </div>
         )}
 
@@ -274,71 +302,47 @@ const PendingPaymentTable: React.FC<PendingPattiyalTableProps> = ({ onSidebarTog
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
+                      <span>Trader Name</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
                       <span>Date</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Weight No</span>
+                      <span>Amount</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Pattiyal No</span>
+                      <span>Bank Name</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Vehicle No</span>
-                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
-                    </div>
-                  </th>
-                  <th className="th-cell">
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Part Load</span>
-                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
-                    </div>
-                  </th>
-                  <th className="th-cell">
-                    <div className="flex justify-between items-center gap-1">
-                      <span>In Time</span>
-                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
-                    </div>
-                  </th>
-                  <th className="th-cell">
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Out Time</span>
-                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
-                    </div>
-                  </th>
-                  <th className="th-cell">
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Point Approval</span>
-                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
-                    </div>
-                  </th>
-                  <th className="th-cell">
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Rate Approval</span>
+                      <span>Account Number</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="last-th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Pattiyal Approval</span>
+                      <span>IFSC Code</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {pendingPattiyals.map((pattiyal, index) => (
-                  <tr key={pattiyal.id} className={`tr-hover group ${selectedIds.includes(pattiyal.id) ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]" : ""}`}>
+                {pendingPattiyals.map((payment, index) => (
+                  <tr key={payment.id} className={`tr-hover group ${selectedIds.includes(payment.id) ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]" : ""}`}>
                     <td className="td-cell">
-                      <input type="checkbox" className="form-check" checked={selectedIds.includes(pattiyal.id)} onChange={() => handleCheckboxChange(pattiyal.id)} />
+                      <input type="checkbox" className="form-check" checked={selectedIds.includes(payment.id)} onChange={() => handleCheckboxChange(payment.id)} />
                     </td>
                     <td className="td-cell">
                       <span className="float-left">{index + 1}</span>
@@ -346,40 +350,13 @@ const PendingPaymentTable: React.FC<PendingPattiyalTableProps> = ({ onSidebarTog
                         <i className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100"></i>
                       </span>
                     </td>
-                    <td className="td-cell">{pattiyal.date}</td>
-                    <td className="td-cell">{pattiyal.weightNo}</td>
-                    <td className="td-cell">{pattiyal.pattiyalNo}</td>
-                    <td className="td-cell">{pattiyal.vehicleNo}</td>
-                    <td className="td-cell">{pattiyal.partLoad}</td>
-                    <td className="td-cell">{pattiyal.inTime}</td>
-                    <td className="td-cell">{pattiyal.outTime}</td>
-                    <td className="td-cell">
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        pattiyal.pointApproval === 'Approved' ? 'bg-green-100 text-green-800' : 
-                        pattiyal.pointApproval === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {pattiyal.pointApproval}
-                      </span>
-                    </td>
-                    <td className="td-cell">
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        pattiyal.rateApproval === 'Approved' ? 'bg-green-100 text-green-800' : 
-                        pattiyal.rateApproval === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {pattiyal.rateApproval}
-                      </span>
-                    </td>
-                    <td className="last-td-cell">
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        pattiyal.pattiyalApproval === 'Approved' ? 'bg-green-100 text-green-800' : 
-                        pattiyal.pattiyalApproval === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {pattiyal.pattiyalApproval}
-                      </span>
-                    </td>
+                    <td className="td-cell">{payment.traderName}</td>
+                    <td className="td-cell">{payment.date}</td>
+                    <td className="td-cell">{payment.amount}</td>
+                    <td className="td-cell">{payment.bankName}</td>
+                    <td className="td-cell">{payment.accountNumber}</td>
+                    <td className="td-cell">{payment.ifscCode}</td>
+                    
                   </tr>
                 ))}
               </tbody>
@@ -426,37 +403,35 @@ const PendingPaymentTable: React.FC<PendingPattiyalTableProps> = ({ onSidebarTog
           </div>
           {/* Scrollable Content */}
           <div className="p-4 overflow-y-auto flex-1">
-            <div className="mb-4">
-              <label className="filter-label">Pattiyal Number</label>
-              <input
-                type="text"
-                placeholder="Enter pattiyal number"
-                className="form-control"
-                value={localFilters.pattiyalNumber || ''}
-                onChange={(e) => handleFilterInputChange('pattiyalNumber', e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="filter-label">Vehicle Number</label>
-              <input
-                type="text"
-                placeholder="Enter vehicle number"
-                className="form-control"
-                value={localFilters.vehicleNumber || ''}
-                onChange={(e) => handleFilterInputChange('vehicleNumber', e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label className="filter-label">Approval Status</label>
-              <select 
-                className="form-control"
-                value={localFilters.approvalStatus || ''}
-                onChange={(e) => handleFilterInputChange('approvalStatus', e.target.value)}
-              >
-                <option value="">All Status</option>
-                <option value="approved">Approved</option>
-                <option value="pending">Pending</option>
-              </select>
+           <div className="mb-4">
+              <div className="flex flex-col md:flex-row gap-2">
+                <div className="w-35">
+                  <label className="filter-label block mb-1">From Date</label>
+                  <DatePicker
+                    id="fromDate"
+                    name="trip_start_date"
+                    placeholder="Select start date"
+                    selected={fromDate}
+                    onChange={setFromDate}
+                    // Max date for "From Date" is "To Date" (if set), otherwise no max.
+                    maxDate={toDate}
+                    className="w-full"
+                  />
+                </div>
+                <div className="w-35">
+                  <label className="filter-label block mb-1">To Date</label>
+                  <DatePicker
+                    id="toDate"
+                    name="trip_end_date"
+                    placeholder="Select end date"
+                    selected={toDate}
+                    onChange={setToDate}
+                    // Min date for "To Date" is "From Date" (if set), otherwise no min.
+                    minDate={fromDate}
+                    className="w-full"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div className="p-2 border-t border-[#dee2e6] flex justify-end gap-2">
