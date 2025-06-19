@@ -285,7 +285,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           readOnly={false}
         />
 
-        {/* Calendar icon button to open the popover */}
+       
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -294,8 +294,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
               size="icon"
               className="absolute right-0 h-full w-auto p-2"
               aria-label="Open date picker"
-              // Disabled logic for the button itself if needed, but usually handled by calendar content
-            >
+                 >
               <CalendarIcon className="h-4 w-4" />
             </Button>
           </PopoverTrigger>
@@ -310,11 +309,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
           >
             <Calendar
               mode="single"
-              // Pass the 'selected' prop from parent, but default to 'today' if undefined for calendar display
-              selected={selected || today}
+               selected={selected || today}
               captionLayout="dropdown"
-              // Control calendar's displayed month based on 'selected' or 'today'
-              month={calendarMonth}
+               month={calendarMonth}
               onMonthChange={setCalendarMonth}
               onSelect={handleCalendarSelect}
               initialFocus
