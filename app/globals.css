@@ -13,12 +13,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Removed automatic dark mode based on system preference */
+/* If you want to enable dark mode, add a class-based approach instead */
+/*
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
+*/
 
 body {
   background: var(--background);

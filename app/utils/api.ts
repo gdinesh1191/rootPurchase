@@ -1,5 +1,5 @@
 // utils/api.ts
-const API_BASE_URL = 'http://transport.infogreen/api/index.php';
+const API_BASE_URL = '/api/proxy/';
 
 /**
  * Generic API function for making POST requests
@@ -13,6 +13,7 @@ export const apiCall = async (payload: any, options: RequestInit = {}): Promise<
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         ...options.headers
       },
       body: JSON.stringify(payload),
@@ -20,13 +21,19 @@ export const apiCall = async (payload: any, options: RequestInit = {}): Promise<
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
     }
 
     const result = await response.json();
     return result;
   } catch (error) {
     console.error('API call failed:', error);
+    
+    // More detailed error information
+    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      throw new Error('Network error: Unable to connect to the server. This might be due to CORS policy or network issues.');
+    }
+    
     throw error;
   }
 };

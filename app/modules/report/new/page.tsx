@@ -2,6 +2,13 @@
 
 import { useState } from 'react';
 import Layout from '../../../components/Layout';
+import WaymentPending from './WaymentPending';
+import WaymentSummary from './WaymentSummary';
+import PattiyalTraders from './PattiyalTraders';
+import PattiyalFarmer from './PattiyalFarmer';
+import PattiyalSummary from './PattiyalSummary';
+import PaymentPending from './PaymentPending';
+import PaymentSummary from './PaymentSummary';
 
 const ReportsPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -52,58 +59,139 @@ const ReportsPage = () => {
     ];
 
     const filteredVehicles = vehicles;
+
+    // Function to render the appropriate component based on active report
+    const renderReportContent = () => {
+        switch (activeReport) {
+            case 'Pending':
+                return activeCategory === 'Wayment' ? <WaymentPending /> : <PaymentPending />;
+            case 'Summary':
+                if (activeCategory === 'Wayment') return <WaymentSummary />;
+                if (activeCategory === 'Pattiyal') return <PattiyalSummary />;
+                if (activeCategory === 'Payment') return <PaymentSummary />;
+                return <WaymentSummary />;
+            case 'Traders':
+                return <PattiyalTraders />;
+            case 'Farmer':
+                return <PattiyalFarmer />;
+            default:
+                return (
+                    <div className="bg-[#ebeff3]">
+                        <div className="mx-2  h-[calc(100vh-129px)] overflow-hidden rounded-lg bg-white">
+                            <div className="h-full overflow-y-auto">
+                                <table className="w-full border-collapse">
+                                    <thead className="sticky-table-header">
+                                        <tr>
+                                            <th className="th-cell" id="checkboxColumn">
+                                                <input type="checkbox" id="selectAll" className="form-check" />
+                                            </th>
+                                            <th className="th-cell">
+                                                <div className="flex justify-between items-center gap-1">
+                                                    <span>S.No.</span>
+                                                </div>
+                                            </th>
+                                            <th className="th-cell">
+                                                <div className="flex justify-between items-center gap-1">
+                                                    <span>Vehicle Number</span>
+                                                    <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                                                </div>
+                                            </th>
+                                            <th className="th-cell">
+                                                <div className="flex justify-between items-center gap-1">
+                                                    <span>Owner Name</span>
+                                                    <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                                                </div>
+                                            </th>
+                                            <th className="th-cell">
+                                                <div className="flex justify-between items-center gap-1">
+                                                    <span>Chassis Number</span>
+                                                    <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                                                </div>
+                                            </th>
+                                            <th className="th-cell">
+                                                <div className="flex justify-between items-center gap-1">
+                                                    <span>FC Expiry Date</span>
+                                                    <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                                                </div>
+                                            </th>
+                                            <th className="th-cell">
+                                                <div className="flex justify-between items-center gap-1">
+                                                    <span>Status</span>
+                                                    <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                                                </div>
+                                            </th>
+                                            <th className="th-cell">
+                                                <div className="flex justify-between items-center gap-1">
+                                                    <span>Next Due</span>
+                                                    <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                                                </div>
+                                            </th>
+                                            <th className="last-th-cell">
+                                                <div className="flex justify-between items-center gap-1">
+                                                    <span>Year</span>
+                                                    <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredVehicles.map((vehicle, index) => (
+                                            <tr key={vehicle.id} className="group hover:bg-[#f5f7f9] text-sm cursor-pointer">
+                                                <td className="td-cell">
+                                                    <input type="checkbox" className="form-check" />
+                                                </td>
+                                                <td className="td-cell">
+                                                    <span className="float-left">{index + 1}</span>
+                                                    <span className="float-right cursor-pointer">
+                                                        <i className="p-1 rounded border border-[#cfd7df] text-[#4d5e6c] ri-pencil-fill opacity-0 group-hover:opacity-100"></i>
+                                                    </span>
+                                                </td>
+                                                <td className="td-cell">{vehicle.number}</td>
+                                                <td className="td-cell">{vehicle.owner}</td>
+                                                <td className="td-cell">{vehicle.chassis}</td>
+                                                <td className="td-cell">{vehicle.fcExpiry}</td>
+                                                <td className="td-cell">{vehicle.status}</td>
+                                                <td className="td-cell">{vehicle.nextDue}</td>
+                                                <td className="last-td-cell">{vehicle.year}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                );
+        }
+    };
+
     const reportCategories = [
         {
-            title: "Outstanding",
+            title: "Wayment",
             items: [
-                { name: "Sales", icon: "ri-file-3-line" },
-                { name: "Purchase", icon: "ri-file-3-line" }
+                { name: "Pending", icon: "ri-file-3-line" },
+                { name: "Summary", icon: "ri-file-3-line" }
             ]
         },
         {
-            title: "Statement",
+            title: "Pattiyal",
             items: [
-                { name: "Creditors Balance", icon: "ri-file-3-line" },
-                { name: "Debtors Balance", icon: "ri-file-3-line" },
-                { name: "Balance Sheet", icon: "ri-file-3-line" },
-                { name: "Customer Statement", icon: "ri-file-3-line" },
-                { name: "Supplier Statement", icon: "ri-file-3-line" }
+                { name: "Traders", icon: "ri-file-3-line" },
+                { name: "Farmer", icon: "ri-file-3-line" },
+                { name: "Summary", icon: "ri-file-3-line" }
             ]
         },
         {
-            title: "Stock",
+            title: "Payment",
             items: [
-                { name: "Closing Stock", icon: "ri-file-3-line" },
-                { name: "Product Sales", icon: "ri-file-3-line" },
-                { name: "Stock Value", icon: "ri-file-3-line" },
-                { name: "Sales Profit", icon: "ri-file-3-line" },
-                { name: "Customer Sales", icon: "ri-file-3-line" }
-            ]
-        },
-        {
-            title: "Accounts",
-            items: [
-                { name: "Day Book", icon: "ri-file-3-line" },
-                { name: "Cash Book", icon: "ri-file-3-line" },
-                { name: "Trail Balance", icon: "ri-file-3-line" }
-            ]
-        },
-        {
-            title: "GST Report",
-            items: [
-                { name: "GSTR 1", icon: "ri-file-3-line" },
-                { name: "B2B", icon: "ri-file-3-line" },
-                { name: "HSN Wise Sales", icon: "ri-file-3-line" },
-                { name: "All Purchase Excel", icon: "ri-file-3-line" },
-                { name: "All Sales Excel", icon: "ri-file-3-line" },
-                { name: "Sales Summary", icon: "ri-file-3-line" },
-                { name: "Purchase Summary", icon: "ri-file-3-line" }
+                { name: "Pending", icon: "ri-file-3-line" },
+                { name: "Summary", icon: "ri-file-3-line" }
             ]
         }
     ];
 
-    const handleReportClick = (reportName: string) => {
+    const handleReportClick = (reportName: string, categoryTitle: string) => {
        setActiveReport(reportName);
+       setActiveCategory(categoryTitle);
     };
 
 
@@ -151,11 +239,11 @@ const ReportsPage = () => {
                                     {category.items.map((item, itemIndex) => (
                                         <li
                                             key={itemIndex}
-                                            className={`cursor-pointer report-list-item p-1 rounded transition-colors duration-200 ${activeReport === item.name
+                                            className={`cursor-pointer report-list-item p-1 rounded transition-colors duration-200 ${activeReport === item.name && activeCategory === category.title
                                                 ? 'bg-[#f0f0f0] text-[#009333] rounded-[5px]'
                                                 : ''
                                                 }`}
-                                            onClick={() => handleReportClick(item.name)}
+                                            onClick={() => handleReportClick(item.name, category.title)}
                                         >
                                             <i className={`${item.icon} text-lg me-2`}></i>
                                             {item.name}
@@ -279,91 +367,7 @@ const ReportsPage = () => {
 
           </div>
 
-                        <div className="bg-[#ebeff3]">
-                            <div className="mx-2  h-[calc(100vh-129px)] overflow-hidden rounded-lg bg-white">
-                                <div className="h-full overflow-y-auto">
-                                    <table className="w-full border-collapse">
-                                        <thead className="sticky-table-header">
-                                            <tr>
-                                                <th className="th-cell" id="checkboxColumn">
-                                                    <input type="checkbox" id="selectAll" className="form-check" />
-                                                </th>
-                                                <th className="th-cell">
-                                                    <div className="flex justify-between items-center gap-1">
-                                                        <span>S.No.</span>
-                                                    </div>
-                                                </th>
-                                                <th className="th-cell">
-                                                    <div className="flex justify-between items-center gap-1">
-                                                        <span>Vehicle Number</span>
-                                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                                    </div>
-                                                </th>
-                                                <th className="th-cell">
-                                                    <div className="flex justify-between items-center gap-1">
-                                                        <span>Owner Name</span>
-                                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                                    </div>
-                                                </th>
-                                                <th className="th-cell">
-                                                    <div className="flex justify-between items-center gap-1">
-                                                        <span>Chassis Number</span>
-                                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                                    </div>
-                                                </th>
-                                                <th className="th-cell">
-                                                    <div className="flex justify-between items-center gap-1">
-                                                        <span>FC Expiry Date</span>
-                                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                                    </div>
-                                                </th>
-                                                <th className="th-cell">
-                                                    <div className="flex justify-between items-center gap-1">
-                                                        <span>Status</span>
-                                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                                    </div>
-                                                </th>
-                                                <th className="th-cell">
-                                                    <div className="flex justify-between items-center gap-1">
-                                                        <span>Next Due</span>
-                                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                                    </div>
-                                                </th>
-                                                <th className="last-th-cell">
-                                                    <div className="flex justify-between items-center gap-1">
-                                                        <span>Year</span>
-                                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                                    </div>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredVehicles.map((vehicle, index) => (
-                                                <tr key={vehicle.id} className="group hover:bg-[#f5f7f9] text-sm cursor-pointer">
-                                                    <td className="td-cell">
-                                                        <input type="checkbox" className="form-check" />
-                                                    </td>
-                                                    <td className="td-cell">
-                                                        <span className="float-left">{index + 1}</span>
-                                                        <span className="float-right cursor-pointer">
-                                                            <i className="p-1 rounded border border-[#cfd7df] text-[#4d5e6c] ri-pencil-fill opacity-0 group-hover:opacity-100"></i>
-                                                        </span>
-                                                    </td>
-                                                    <td className="td-cell">{vehicle.number}</td>
-                                                    <td className="td-cell">{vehicle.owner}</td>
-                                                    <td className="td-cell">{vehicle.chassis}</td>
-                                                    <td className="td-cell">{vehicle.fcExpiry}</td>
-                                                    <td className="td-cell">{vehicle.status}</td>
-                                                    <td className="td-cell">{vehicle.nextDue}</td>
-                                                    <td className="last-td-cell">{vehicle.year}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                        </div>
+                        {renderReportContent()}
                     </div>
 
                     <footer className="bg-[#ebeff3] py-3  px-4 flex items-center justify-start">
@@ -377,7 +381,7 @@ const ReportsPage = () => {
             </div>
 
         </Layout>
-    );
+    );  
 }
 
 export default ReportsPage;
