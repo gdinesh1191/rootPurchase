@@ -1,17 +1,36 @@
-'use client'
+ 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react' // Added useEffect for keyboard shortcut
 
 interface HeaderProps {
-  pageTitle?: string
+  pageTitle?: string; // Keep this prop definition
+  onSearchClick: () => void; // New prop for handling search click
 }
 
-export default function Header({ pageTitle = "Dashboard" }: HeaderProps) {
+export default function Header({ pageTitle, onSearchClick }: HeaderProps) { // Destructure pageTitle here
   const [searchFocused, setSearchFocused] = useState(false)
+
+  // Add a keyboard shortcut for '/' to open the search
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === '/') {
+        event.preventDefault(); // Prevent '/' from typing in other inputs
+        setSearchFocused(true);
+        onSearchClick();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onSearchClick]);
 
   return (
     <header className="bg-[#f8f9fa] shadow-sm flex justify-between items-center p-2">
       <div className="flex-1">
+        {/* Render the pageTitle here */}
         <span className="in-page-title text-lg font-medium text-[#009333]">{pageTitle}</span>
       </div>
 
@@ -19,7 +38,10 @@ export default function Header({ pageTitle = "Dashboard" }: HeaderProps) {
         className={`relative border border-[#cfd7df] rounded-md px-4 py-1 mr-3 w-[175px] bg-[#FDFEFE] text-[#12375D] text-sm flex items-center cursor-pointer transition-all duration-200 ${
           searchFocused ? 'ring-2 ring-blue-200' : ''
         }`}
-        onClick={() => setSearchFocused(true)}
+        onClick={() => {
+          setSearchFocused(true);
+          onSearchClick();
+        }}
       >
         <i className="ri-search-line absolute left-2 text-sm"></i>
         {searchFocused ? (
@@ -31,7 +53,7 @@ export default function Header({ pageTitle = "Dashboard" }: HeaderProps) {
             onBlur={() => setSearchFocused(false)}
             onKeyDown={(e) => {
               if (e.key === 'Escape') {
-                setSearchFocused(false)
+                setSearchFocused(false);
               }
             }}
           />
@@ -50,10 +72,8 @@ export default function Header({ pageTitle = "Dashboard" }: HeaderProps) {
 
         <div className="relative">
           <i className="ri-notification-line text-xl text-[#264966] cursor-pointer hover:text-[#1a3d56] transition-colors duration-200"></i>
-          {/* Optional notification badge */}
-          {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span> */}
-        </div>
+            </div>
       </div>
     </header>
   )
-} 
+}
