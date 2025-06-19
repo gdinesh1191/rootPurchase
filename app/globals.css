@@ -32,7 +32,16 @@ body {
   background-color: #191f26;
   border-left-color: #1aed59;
 }
-
+.coming-soon-banner {
+  position: relative;
+  background: linear-gradient(45deg, #3b82f6, #2563eb, #1e40af);
+  color: white;
+  padding: 7px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 50%, 100% 100%, 0 100%);
+}
 .font-helvetica {
   font-family: Helvetica, Arial, sans-serif;
 }
@@ -184,5 +193,22 @@ input[type="checkbox"] {
   .badge-selected {
   @apply py-[10px] px-[15px] text-sm rounded-full shadow-[0_2px_10px_#27313a66] bg-[#fef1e1] text-[#12344d];
 }
+.table-cell-header {
+  @apply py-1.5 px-3 border-r border-[#dee2e6];
+}
 
+/* To remove the right border from the last header cell */
+.table-cell-header:last-child {
+  @apply border-r-0; /* Equivalent to border-right: none; */
+}
+
+.table-cell-data {
+  @apply py-2 px-3 border-r border-[#dee2e6];
+}
+
+/* To remove the right border from the last data cell */
+.table-cell-data:last-child {
+  @apply border-r-0; /* Equivalent to border-right: none; */
+}
+ 
 }
