@@ -7,14 +7,14 @@ interface HeaderProps {
   onSearchClick: () => void; // New prop for handling search click
 }
 
-export default function Header({ pageTitle, onSearchClick }: HeaderProps) { // Destructure pageTitle here
+export default function Header({ pageTitle, onSearchClick }: HeaderProps) {  
   const [searchFocused, setSearchFocused] = useState(false)
 
-  // Add a keyboard shortcut for '/' to open the search
+  
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === '/') {
-        event.preventDefault(); // Prevent '/' from typing in other inputs
+        event.preventDefault();  
         setSearchFocused(true);
         onSearchClick();
       }
