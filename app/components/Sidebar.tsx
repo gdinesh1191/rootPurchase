@@ -55,6 +55,12 @@ export default function Sidebar() {
                 <span>P. Pattiyal</span>
               </div>
             </li>
+            <li onClick={() => router.push('/modules/pattiyal/payment-list')} className={`px-4 py-2 border-l-5 hover:bg-[#191f26] hover:border-l-[#1aed59] flex items-center justify-between cursor-pointer ${isActive('/modules/pattiyal/payment-list') ? 'bg-[#191f26] border-l-[#1aed59] text-white' : 'text-[#b0b3b7] border-l-transparent'}`}>
+              <div className="flex items-center">
+                <i className={`ri-file-list-line mr-3 text-lg ${isActive('/modules/pattiyal/payment') ? 'text-white' : ''}`}></i>
+                <span>Payment List</span>
+              </div>
+            </li>
 
             <li onClick={() => router.push('/modules/employee/list')} className={`px-4 py-2 border-l-5 hover:bg-[#191f26] hover:border-l-[#1aed59] flex items-center justify-between cursor-pointer ${isActive('/modules/employee/list') ? 'bg-[#191f26] border-l-[#1aed59] text-white' : 'text-[#b0b3b7] border-l-transparent'}`}>
               <div className="flex items-center">
