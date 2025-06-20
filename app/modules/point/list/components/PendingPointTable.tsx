@@ -543,152 +543,131 @@ const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }
                           </div>
                         </div>
                       </div>
-
-                      {/* Highlighted Weights - Individually Colored */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                        {/* First Weight */}
-                        <div className="p-3 rounded-lg bg-blue-50 border-l-4 border-blue-600 shadow-sm">
-                          <div className="text-xs text-gray-600">
-                            First Weight
-                          </div>
-                          <div className="text-lg font-extrabold text-black leading-tight">
-                            {editData?.firstWeight || "-"}
-                          </div>
-                        </div>
-
-                        {/* Second Weight */}
-                        <div className="p-3 rounded-lg bg-purple-50 border-l-4 border-purple-600 shadow-sm">
-                          <div className="text-xs text-gray-600">
-                            Second Weight
-                          </div>
-                          <div className="text-lg font-extrabold text-black leading-tight">
-                            {editData?.secondWeight || "-"}
-                          </div>
-                        </div>
-
-                        {/* Net Weight */}
-                        <div className="p-3 rounded-lg bg-yellow-50 border-l-4 border-yellow-500 shadow-sm">
-                          <div className="text-xs text-gray-600">
-                            Net Weight (Kgs)
-                          </div>
-                          <div className="text-lg font-extrabold text-black leading-tight">
-                            {editData?.netWeight || "-"}
-                          </div>
-                        </div>
-
-                        {/* Bill Weight */}
-                        <div className="p-3 rounded-lg bg-teal-50 border-l-4 border-teal-600 shadow-sm">
-                          <div className="text-xs text-gray-600">
-                            Bill Weight (Kgs)
-                          </div>
-                          <div className="text-lg font-extrabold text-black leading-tight">
-                            {editData?.billWeight || "-"}
-                          </div>
-                        </div>
-                      </div>
                     </div>
 
                     <div className="border-t border-gray-300 my-6"></div>
 
                     {/* Editable Fields */}
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Customer Name</label>
-                      <input
-                        type="text"
-                        value={editData?.customerName || ""}
-                        placeholder="Enter Customer Name"
-                        className="form-control capitalize text-[#000]"
-                        onChange={(e) =>
-                          setEditData({
-                            ...(editData as PendingPoint), // Cast to PendingPoint
-                            customerName: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Driver Name</label>
-                      <input
-                        type="text"
-                        value={editData?.driverName || ""}
-                        placeholder="Enter Driver Name"
-                        className="form-control capitalize text-[#000]"
-                        onChange={(e) =>
-                          setEditData({
-                            ...(editData as PendingPoint),
-                            driverName: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      <div className="flex flex-col gap-4 pr-6 border-r border-gray-300">
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">Size</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Size"
+                            className="form-control capitalize text-[#000]"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1"> Weight</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Weight"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
 
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">No. of Part Loads</label>
-                      <input
-                        type="text"
-                        value={editData?.noOfPartLoads || ""}
-                        placeholder="0"
-                        className="form-control only_number text-[#000]"
-                        onChange={(e) =>
-                          setEditData({
-                            ...(editData as PendingPoint),
-                            noOfPartLoads: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">
+                            Average Point
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter Average Point"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+                      </div>
 
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Material</label>
-                      <input
-                        type="text"
-                        value={editData?.material || ""}
-                        placeholder="Enter Material"
-                        className="form-control capitalize text-[#000]"
-                        onChange={(e) =>
-                          setEditData({ ...(editData as PendingPoint), material: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Variety</label>
-                      <input
-                        type="text"
-                        value={editData?.variety || ""}
-                        placeholder="Enter Variety"
-                        className="form-control capitalize text-[#000] "
-                        onChange={(e) =>
-                          setEditData({ ...(editData as PendingPoint), variety: e.target.value })
-                        }
-                      />
-                    </div>
+                      <div className="flex flex-col gap-4 pr-6 border-r border-gray-300">
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">Size</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Size"
+                            className="form-control capitalize text-[#000]"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1"> Weight</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Weight"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
 
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Place</label>
-                      <input
-                        type="text"
-                        value={editData?.place || ""}
-                        placeholder="Enter Place"
-                        className="form-control capitalize text-[#000]"
-                        onChange={(e) =>
-                          setEditData({ ...(editData as PendingPoint), place: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Remarks</label>
-                      <textarea
-                        placeholder="Enter Remarks"
-                        value={editData?.remarks || ""}
-                        onChange={(e) =>
-                          setEditData({
-                            ...(editData as PendingPoint),
-                            remarks: e.target.value,
-                          })
-                        }
-                        rows={3}
-                        className="form-control h-[40px] capitalize text-[#000] "
-                      />
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">
+                            Average Point
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter Average Point"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-4 pr-6 border-r border-gray-300">
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">Size</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Size"
+                            className="form-control capitalize text-[#000]"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1"> Weight</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Weight"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">
+                            Average Point
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter Average Point"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-4">
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">Size</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Size"
+                            className="form-control capitalize text-[#000]"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1"> Weight</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Weight"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">
+                            Average Point
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter Average Point"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
