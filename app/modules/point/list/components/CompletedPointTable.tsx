@@ -311,7 +311,8 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
                   <td className="td-cell">{Point.PointNo}</td>
                   <td className="td-cell">{Point.vehicleNo}</td>
                   <td className="td-cell">{Point.variety}</td>
-                  <td className="td-cell">{Point.weight}</td>  <td className="td-cell">{Point.weightAvgPoint}</td>
+                  <td className="td-cell">{Point.weight}</td>
+                  <td className="td-cell">{Point.weightAvgPoint}</td>
                   <td className="td-cell">{Point.partLoad}</td>
                    </tr>
                 ))}
