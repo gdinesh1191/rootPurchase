@@ -1,11 +1,12 @@
-"use client";
+ "use client";
 
 import { useEffect, useState } from "react";
-import { dummyPoints } from "@/app/data/JSON";
+import { dummyPoints } from "@/app/data/JSON"; // Assuming this path is correct
+
 interface PendingPoint {
   id: number;
   date: string;
-  waymentNo: string; // Renamed from weightNo
+  waymentNo: string;
   PointNo: string;
   vehicleNo: string;
   partLoad: string;
@@ -15,8 +16,21 @@ interface PendingPoint {
   rateApproval: string;
   PointApproval: string;
   weight: string;
-  variety: string; // New column
-  weightAvgPoint: string; // New column
+  variety: string;
+  weightAvgPoint: string;
+  // Add new fields for the modal's editable data
+  customerName?: string;
+  driverName?: string;
+  noOfPartLoads?: string;
+  material?: string;
+  place?: string;
+  remarks?: string;
+  firstWeight?: string;
+  secondWeight?: string;
+  netWeight?: string;
+  billWeight?: string;
+  materialType?: string;
+  soilLossPercentage?: string;
 }
 
 interface PendingPointTableProps {
@@ -27,23 +41,40 @@ const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }
   const [pendingPoints, setPendingPoints] = useState<PendingPoint[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [loading, setLoading] = useState(true); // Set to true initially for dummy data
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filter states
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<any>({});
   const [localFilters, setLocalFilters] = useState<any>({});
 
- 
+  // State for the Edit Point Data modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editData, setEditData] = useState<PendingPoint | null>(null);
 
   const fetchPendingPoints = async () => {
     try {
       setLoading(true);
       setError(null);
-      // Simulate API call delay
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      setPendingPoints(dummyPoints);
+      // For demonstration, adding some dummy values for new fields
+      const updatedDummyPoints = dummyPoints.map(point => ({
+        ...point,
+        customerName: "Customer " + point.id,
+        driverName: "Driver " + point.id,
+        noOfPartLoads: String(Math.floor(Math.random() * 5)),
+        material: "Material " + (point.id % 3 + 1),
+        place: "Place " + (point.id % 2 + 1),
+        remarks: "Remarks for " + point.id,
+        firstWeight: (parseFloat(point.weight) + 500).toFixed(2),
+        secondWeight: (parseFloat(point.weight) - 200).toFixed(2),
+        netWeight: point.weight,
+        billWeight: (parseFloat(point.weight) * 0.98).toFixed(2),
+        materialType: point.id % 2 === 0 ? "Type A" : "Type B",
+        soilLossPercentage: (Math.random() * 5).toFixed(2),
+      }));
+      setPendingPoints(updatedDummyPoints as PendingPoint[]);
     } catch (err) {
       console.error("Error fetching pending Points:", err);
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch pending Points";
@@ -72,7 +103,6 @@ const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }
     fetchPendingPoints();
   };
 
-  // Filter handlers
   const handleFilterToggle = () => {
     setIsFilterOpen(true);
     setLocalFilters(filters);
@@ -117,8 +147,39 @@ const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }
         return false;
       }
     }
+    if (filters.variety && !point.variety.toLowerCase().includes(filters.variety.toLowerCase())) {
+      return false;
+    }
     return true;
   });
+
+  // Modal functions
+  const openModal = (point: PendingPoint) => {
+    setEditData(point);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditData(null); // Clear edit data when closing
+  };
+
+  const SaveEdit = () => {
+    if (editData) {
+      // Find the index of the item to update
+      const index = pendingPoints.findIndex(point => point.id === editData.id);
+
+      if (index !== -1) {
+        // Create a new array with the updated item
+        const updatedPoints = [...pendingPoints];
+        updatedPoints[index] = editData;
+        setPendingPoints(updatedPoints);
+        console.log("Updated Point Data:", editData); // Log the updated data
+      }
+    }
+    closeModal();
+  };
+
 
   if (loading) {
     return (
@@ -259,7 +320,7 @@ const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Wayment No</span> {/* Changed from Weight No */}
+                      <span>Wayment No</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
@@ -277,19 +338,19 @@ const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Variety</span> {/* New Column */}
+                      <span>Variety</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Weight</span> {/* New Column */}
+                      <span>Weight</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span> Avg Point</span> {/* New Column */}
+                      <span> Avg Point</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
@@ -299,23 +360,30 @@ const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
-                  
                 </tr>
               </thead>
               <tbody>
-                {filteredPoints.map((Point, index) => (
-                  <tr key={Point.id} className={`tr-hover group ${selectedIds.includes(Point.id) ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]" : ""}`}>
-                  <td className="td-cell"><input type="checkbox" className="form-check" checked={selectedIds.includes(Point.id)} onChange={() => handleCheckboxChange(Point.id)} /></td>
-                  <td className="td-cell"><span className="float-left">{index + 1}</span><span className="float-right"><i className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100"></i></span></td>
-                  <td className="td-cell">{Point.date}</td>
-                  <td className="td-cell">{Point.waymentNo}</td>
-                  <td className="td-cell">{Point.PointNo}</td>
-                  <td className="td-cell">{Point.vehicleNo}</td>
-                  <td className="td-cell">{Point.variety}</td>
-                  <td className="td-cell">{Point.weight}</td>
-                  <td className="td-cell">{Point.weightAvgPoint}</td>
-                  <td className="td-cell">{Point.partLoad}</td>
-                   </tr>
+                {filteredPoints.map((point, index) => (
+                  <tr key={point.id} className={`tr-hover group ${selectedIds.includes(point.id) ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]" : ""}`}>
+                    <td className="td-cell"><input type="checkbox" className="form-check" checked={selectedIds.includes(point.id)} onChange={() => handleCheckboxChange(point.id)} /></td>
+                    <td className="td-cell">
+                      <span className="float-left">{index + 1}</span>
+                      <span className="float-right">
+                        <i
+                          className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100 cursor-pointer"
+                          onClick={() => openModal(point)} // Call openModal with the current point data
+                        ></i>
+                      </span>
+                    </td>
+                    <td className="td-cell">{point.date}</td>
+                    <td className="td-cell">{point.waymentNo}</td>
+                    <td className="td-cell">{point.PointNo}</td>
+                    <td className="td-cell">{point.vehicleNo}</td>
+                    <td className="td-cell">{point.variety}</td>
+                    <td className="td-cell">{point.weight}</td>
+                    <td className="td-cell">{point.weightAvgPoint}</td>
+                    <td className="td-cell">{point.partLoad}</td>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -381,7 +449,7 @@ const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }
                 onChange={(e) => handleFilterInputChange('vehicleNumber', e.target.value)}
               />
             </div>
-          
+
             {/* New Filter for Variety */}
             <div className="mb-4">
               <label className="filter-label">Variety</label>
@@ -413,6 +481,231 @@ const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }
           </div>
         </div>
       </div>
+
+      {/* Edit Point Data Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-[0.5rem] w-full max-w-[60%] min-h-[calc(100vh-250px)] flex flex-col custom-helvetica">
+            {/* Modal Header */}
+            <div className="relative border-b border-[#dee2e6] px-4 py-2 bg-[#f8f8f8] rounded-tl-md">
+              <span className="text-[16px] text-[#212529]">Edit Point Data</span>
+              <button
+                onClick={closeModal}
+                className="absolute -top-[10px] -right-[10px] text-gray-500 hover:text-gray-700 bg-[#909090] hover:bg-[#cc0000] rounded-full w-[30px] h-[30px] border-2 border-white cursor-pointer"
+              >
+                <i className="ri-close-line text-white"></i>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="row p-[16px] m-0 flex-1 flex flex-col overflow-auto max-h-[calc(100vh-200px)]">
+              <div className="grid grid-cols-12 flex-1 ">
+                <div className="col-span-12 overflow-y-auto pr-2 ">
+                  <div className="space-y-6">
+                    {/* Summary Card – Redesigned */}
+                    <div className=" p-4 bg-white rounded-xl border border-gray-200 shadow-md">
+                      <div className="text-sm font-semibold text-gray-800 mb-3 border-b pb-2">
+                        Summary Info
+                      </div>
+
+                      <div className="grid grid-cols-4 gap-4 text-sm text-gray-700">
+                        {/* Vehicle No - Text Highlighted */}
+                        <div>
+                          <label className="form-label">Vehicle No</label>
+                          <p className="text-[16px] font-bold text-green-700">
+                            {editData?.vehicleNo || "-"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="form-label">Wayment No</label>
+                          <p className="text-[16px] font-bold text-green-700">
+                            {editData?.waymentNo || "-"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="form-label">Soil Loss (%)</label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-700 font-bold text-[16px]">
+                              {editData?.soilLossPercentage || "-"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Material Type - Text Highlighted */}
+                        <div>
+                          <label className="form-label">Material Type</label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-700 font-bold text-[16px]">
+                              {editData?.materialType || "-"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Highlighted Weights - Individually Colored */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                        {/* First Weight */}
+                        <div className="p-3 rounded-lg bg-blue-50 border-l-4 border-blue-600 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            First Weight
+                          </div>
+                          <div className="text-lg font-extrabold text-black leading-tight">
+                            {editData?.firstWeight || "-"}
+                          </div>
+                        </div>
+
+                        {/* Second Weight */}
+                        <div className="p-3 rounded-lg bg-purple-50 border-l-4 border-purple-600 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            Second Weight
+                          </div>
+                          <div className="text-lg font-extrabold text-black leading-tight">
+                            {editData?.secondWeight || "-"}
+                          </div>
+                        </div>
+
+                        {/* Net Weight */}
+                        <div className="p-3 rounded-lg bg-yellow-50 border-l-4 border-yellow-500 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            Net Weight (Kgs)
+                          </div>
+                          <div className="text-lg font-extrabold text-black leading-tight">
+                            {editData?.netWeight || "-"}
+                          </div>
+                        </div>
+
+                        {/* Bill Weight */}
+                        <div className="p-3 rounded-lg bg-teal-50 border-l-4 border-teal-600 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            Bill Weight (Kgs)
+                          </div>
+                          <div className="text-lg font-extrabold text-black leading-tight">
+                            {editData?.billWeight || "-"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-300 my-6"></div>
+
+                    {/* Editable Fields */}
+                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                      <label className="form-label ms-5 w-1/2">Customer Name</label>
+                      <input
+                        type="text"
+                        value={editData?.customerName || ""}
+                        placeholder="Enter Customer Name"
+                        className="form-control capitalize text-[#000]"
+                        onChange={(e) =>
+                          setEditData({
+                            ...(editData as PendingPoint), // Cast to PendingPoint
+                            customerName: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                      <label className="form-label ms-5 w-1/2">Driver Name</label>
+                      <input
+                        type="text"
+                        value={editData?.driverName || ""}
+                        placeholder="Enter Driver Name"
+                        className="form-control capitalize text-[#000]"
+                        onChange={(e) =>
+                          setEditData({
+                            ...(editData as PendingPoint),
+                            driverName: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                      <label className="form-label ms-5 w-1/2">No. of Part Loads</label>
+                      <input
+                        type="text"
+                        value={editData?.noOfPartLoads || ""}
+                        placeholder="0"
+                        className="form-control only_number text-[#000]"
+                        onChange={(e) =>
+                          setEditData({
+                            ...(editData as PendingPoint),
+                            noOfPartLoads: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                      <label className="form-label ms-5 w-1/2">Material</label>
+                      <input
+                        type="text"
+                        value={editData?.material || ""}
+                        placeholder="Enter Material"
+                        className="form-control capitalize text-[#000]"
+                        onChange={(e) =>
+                          setEditData({ ...(editData as PendingPoint), material: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                      <label className="form-label ms-5 w-1/2">Variety</label>
+                      <input
+                        type="text"
+                        value={editData?.variety || ""}
+                        placeholder="Enter Variety"
+                        className="form-control capitalize text-[#000] "
+                        onChange={(e) =>
+                          setEditData({ ...(editData as PendingPoint), variety: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                      <label className="form-label ms-5 w-1/2">Place</label>
+                      <input
+                        type="text"
+                        value={editData?.place || ""}
+                        placeholder="Enter Place"
+                        className="form-control capitalize text-[#000]"
+                        onChange={(e) =>
+                          setEditData({ ...(editData as PendingPoint), place: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                      <label className="form-label ms-5 w-1/2">Remarks</label>
+                      <textarea
+                        placeholder="Enter Remarks"
+                        value={editData?.remarks || ""}
+                        onChange={(e) =>
+                          setEditData({
+                            ...(editData as PendingPoint),
+                            remarks: e.target.value,
+                          })
+                        }
+                        rows={3}
+                        className="form-control h-[40px] capitalize text-[#000] "
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Fixed Footer Buttons */}
+            <div className="sticky bottom-0 bg-[#ebeff3] h-[60px] py-3 px-4 flex justify-end space-x-4 z-10 rounded-b-lg">
+
+              <button className="btn-sm btn-primary" onClick={SaveEdit}>Save</button>
+              <button onClick={closeModal} className="btn-sm btn-secondary">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
