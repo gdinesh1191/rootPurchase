@@ -42,9 +42,9 @@ export default function Sidebar() {
         <nav className="py-0">
           <ul>
             <li
-              onClick={() => router.push("/modules/wayment")}
+              onClick={() => router.push("/modules/wayment/list")}
               className={`px-4 py-2 border-l-5 hover:bg-[#191f26] hover:border-l-[#1aed59] flex items-center justify-between cursor-pointer ${
-                isActive("/modules/wayment")
+                isActive("/modules/wayment/list")
                   ? "bg-[#191f26] border-l-[#1aed59] text-white"
                   : "text-[#b0b3b7] border-l-transparent"
               }`}
@@ -52,7 +52,7 @@ export default function Sidebar() {
               <div className="flex items-center">
                 <i
                   className={`ri-route-line mr-3 text-lg ${
-                    isActive("/modules/wayment") ? "text-white" : ""
+                    isActive("/modules/wayment/list") ? "text-white" : ""
                   }`}
                 ></i>
                 <span>Wayment</span>
