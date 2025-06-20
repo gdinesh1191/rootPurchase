@@ -88,6 +88,30 @@ export default function Sidebar() {
                 <span>Payment List</span>
               </div>
             </li>
+
+            <li
+              className={`px-4 py-2 border-l-5 hover:bg-[#191f26] hover:border-l-[#1aed59] flex items-center justify-between cursor-pointer ${
+                isActive("/modules/point/new") || isActive("/modules/point/new")
+                  ? "bg-[#191f26] border-[#1aed59] text-white "
+                  : "text-[#b0b3b7] border-l-transparent "
+              }`}
+            >
+               <div className="flex items-center" onClick={() => router.push("/modules/point/new")}>
+                <i
+                  className={`ri-file-list-line mr-3 text-lg ${
+                    isActive("/modules/point/new") ? "text-white" : ""
+                  }`}
+                ></i>
+                <span>Point New</span>
+              </div>
+              {/* <i
+                onClick={() => router.push("/modules/point/new")}
+                className={`ri-add-fill text-lg ${
+                  isActive("/modules/point/new") ? "text-white" : ""
+                }`}
+              ></i> */}
+            </li>
+
             <li onClick={() => router.push('/modules/point/list')} className={`px-4 py-2 border-l-5 hover:bg-[#191f26] hover:border-l-[#1aed59] flex items-center justify-between cursor-pointer ${isActive('/modules/point/list') ? 'bg-[#191f26] border-l-[#1aed59] text-white' : 'text-[#b0b3b7] border-l-transparent'}`}>
               <div className="flex items-center">
                 <i className={`ri-file-list-line mr-3 text-lg ${isActive('/modules/point/list') ? 'text-white' : ''}`}></i>
