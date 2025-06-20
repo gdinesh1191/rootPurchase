@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiCall } from "../../../../utils/api";
 import DatePicker from "@/app/utils/datepicker";
+import { paymentmockData } from "@/app/JSON";
 
 interface CompletedPattiyal {
   id: number;
@@ -37,75 +38,11 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
       setError(null);
       
       // Mock data for completed pattiyals
-      const mockData = [
-        {
-          id: 1,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "15000.00",
-          bankName: "State Bank of India",
-          accountNumber: "XXXXXXXXXXXX1234",
-          ifscCode: "SBIN0000001",
-        },
-        {
-          id: 2,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "22500.50",
-          bankName: "HDFC Bank",
-          accountNumber: "XXXXXXXXXXXX5678",
-          ifscCode: "HDFC0000002",
-        },
-        {
-          id: 3,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "10000.00",
-          bankName: "ICICI Bank",
-          accountNumber: "XXXXXXXXXXXX9101",
-          ifscCode: "ICIC0000003",
-        },
-        {
-          id: 4,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "30000.75",
-          bankName: "Axis Bank",
-          accountNumber: "XXXXXXXXXXXX1122",
-          ifscCode: "UTIB0000004",
-        },
-        {
-          id: 5,
-          traderName: "John Doe",
-          date:"01/06/2024",
-          amount: "5000.00",
-          bankName: "Canara Bank",
-          accountNumber: "XXXXXXXXXXXX3344",
-          ifscCode: "CNRB0000005",
-        },
-        {
-          id: 6,
-          traderName: "John Doe",
-          date:"25//10/2024",
-          amount: "30000.75",
-          bankName: "Axis Bank",
-          accountNumber: "XXXXXXXXXXXX1122",
-          ifscCode: "UTIB0000004",
-        },
-        {
-          id: 7,
-          traderName: "John Doe",
-          date:"25//10/2024",
-          amount: "5000.00",
-          bankName: "Canara Bank",
-          accountNumber: "XXXXXXXXXXXX3344",
-          ifscCode: "CNRB0000005",
-        },
-      ];
+      
       
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
-      setCompletedPattiyals(mockData);
+      setCompletedPattiyals(paymentmockData);
       
     } catch (err) {
       console.error("Error fetching completed pattiyals:", err);

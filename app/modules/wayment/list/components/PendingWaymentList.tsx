@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import DatePicker from "@/app/utils/datepicker";
 import { RadioGroup } from "@/app/utils/form-controls";
+import { waymentMockData } from "@/app/JSON";
 
 interface Wayment {
   id: number;
@@ -38,83 +39,11 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
       setError(null);
 
       // Mock data for wayment
-      const mockData = [
-        {
-          id: 1,
-          customerName: "Kumar Traders",
-          waymentNo: "SAGO001",
-          vehicleNo: "TN38AA1234",
-          materialType: "Tapioca",
-          variety: "நீலம்",
-          netWeight: "2500 kg",
-          place: "Salem",
-        },
-        {
-          id: 2,
-          customerName: "Selvam Agencies",
-          waymentNo: "SAGO002",
-          vehicleNo: "TN28BB5678",
-          materialType: "Tapioca",
-          variety: "குண்டு",
-          netWeight: "2300 kg",
-          place: "Namakkal",
-        },
-        {
-          id: 3,
-          customerName: "Rani Traders",
-          waymentNo: "SAGO003",
-          vehicleNo: "TN30CC3456",
-          materialType: "Other",
-          variety: "நீலம்",
-          netWeight: "1800 kg",
-          place: "Rasipuram",
-        },
-        {
-          id: 4,
-          customerName: "Sabari Mill",
-          waymentNo: "SAGO004",
-          vehicleNo: "TN32DD9012",
-          materialType: "Tapioca",
-          variety: "குண்டு",
-          netWeight: "2000 kg",
-          place: "Attur",
-        },
-        {
-          id: 5,
-          customerName: "Sri Sago Co.",
-          waymentNo: "SAGO005",
-          vehicleNo: "TN12EE8888",
-          materialType: "Other",
-          variety: "குண்டு",
-          netWeight: "1900 kg",
-          place: "Tiruchengode",
-        },
-        {
-          id: 6,
-          customerName: "Vel Traders",
-          waymentNo: "SAGO006",
-          vehicleNo: "TN29FF1122",
-          materialType: "Tapioca",
-          variety: "நீலம்",
-          netWeight: "2600 kg",
-          place: "Edappadi",
-        },
-        {
-          id: 7,
-          customerName: "Shree Mill",
-          waymentNo: "SAGO007",
-          vehicleNo: "TN25GG3344",
-          materialType: "Tapioca",
-          variety: "குண்டு",
-          netWeight: "2200 kg",
-          place: "Mallasamudram",
-        },
-        
-      ];
+     
 
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
-      setWayment(mockData);
+      setWayment(waymentMockData);
     } catch (err) {
       console.error("Error fetching wayment:", err);
       setError("Failed to fetch wayment");
