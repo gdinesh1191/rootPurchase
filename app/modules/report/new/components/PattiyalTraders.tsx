@@ -1,107 +1,107 @@
- // components/Reports/WaymentPending.tsx
+ // components/Reports/PattiyalTraders.tsx
 'use client';
 
 import { RadioGroup } from '@/app/utils/form-controls';
 import { useEffect, useState } from 'react';
-// Assuming DatePicker and RadioGroup are available at these paths
-// import DatePicker from '@/app/utils/datepicker';
-// import { RadioGroup } from '@/app/utils/form-controls';
-
-
-// Define the Wayment interface as per AllWaymentList
-interface Wayment {
+ 
+interface Pattiyal {
   id: number;
-  customerName: string;
-  waymentNo: string;
+  date: string;
+  weightNo: string;
+  pattiyalNo: string;  
   vehicleNo: string;
-  materialType: string;
-  variety: string;
-  netWeight: string;
-  place: string;
+  partLoad: string;
+  inTime: string;
+  outTime: string;
+  completedDate: string;
+  totalAmount: string;
+  paymentStatus: string;
+  deliveryStatus: string;
+     customerName?: string; // Optional, as it's not in the mock data but was in the original interface
+  materialType?: string; // Optional
+  variety?: string; // Optional
+  netWeight?: string; // Optional
+  place?: string; // Optional
 }
 
-interface WaymentPendingProps {
+interface PattiyalTradersProps {
   activeReport: string | null;
   activeCategory: string | null;
 }
 
-const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCategory }) => {
-  const [wayment, setWayment] = useState<Wayment[]>([]);
+const PattiyalTraders: React.FC<PattiyalTradersProps> = ({ activeReport, activeCategory }) => {
+  const [Pattiyal, setPattiyal] = useState<Pattiyal[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // const [materialType, setMaterialType] = useState<string>("TapiocaRoot"); // Not used in current display, but kept if needed for filtering
 
   // Filter states
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [filters, setFilters] = useState<any>({}); // Applied filters
   const [localFilters, setLocalFilters] = useState<any>({}); // Filters being set in the sidebar
 
-  const fetchWayment = async () => {
+  const fetchPattiyal = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Mock data for wayment as provided in AllWaymentList
+      // Mock data for Pattiyal as provided in AllPattiyalList
       const mockData = [
-        { id: 1, customerName: "Kumar Traders", waymentNo: "SAGO001", vehicleNo: "TN38AA1234", materialType: "Tapioca", variety: "நீலம்", netWeight: "2500 kg", place: "Salem" },
-        { id: 2, customerName: "Selvam Agencies", waymentNo: "SAGO002", vehicleNo: "TN28BB5678", materialType: "Tapioca", variety: "குண்டு", netWeight: "2300 kg", place: "Namakkal" },
-        { id: 3, customerName: "Rani Traders", waymentNo: "SAGO003", vehicleNo: "TN30CC3456", materialType: "Other", variety: "நீலம்", netWeight: "1800 kg", place: "Rasipuram" },
-        { id: 4, customerName: "Sabari Mill", waymentNo: "SAGO004", vehicleNo: "TN32DD9012", materialType: "Tapioca", variety: "குண்டு", netWeight: "2000 kg", place: "Attur" },
-        { id: 5, customerName: "Sri Sago Co.", waymentNo: "SAGO005", vehicleNo: "TN12EE8888", materialType: "Other", variety: "குண்டு", netWeight: "1900 kg", place: "Tiruchengode" },
-        { id: 6, customerName: "Vel Traders", waymentNo: "SAGO006", vehicleNo: "TN29FF1122", materialType: "Tapioca", variety: "நீலம்", netWeight: "2600 kg", place: "Edappadi" },
-        { id: 7, customerName: "Shree Mill", waymentNo: "SAGO007", vehicleNo: "TN25GG3344", materialType: "Tapioca", variety: "குண்டு", netWeight: "2200 kg", place: "Mallasamudram" },
-        { id: 8, customerName: "Sundar & Sons", waymentNo: "SAGO008", vehicleNo: "TN58HH5566", materialType: "Other", variety: "நீலம்", netWeight: "2100 kg", place: "Komarapalayam" },
-        { id: 9, customerName: "Sago Gold Traders", waymentNo: "SAGO009", vehicleNo: "TN20JJ7788", materialType: "Tapioca", variety: "நீலம்", netWeight: "2400 kg", place: "Tharamangalam" },
-        { id: 10, customerName: "Anbu Sago", waymentNo: "SAGO010", vehicleNo: "TN45KK9900", materialType: "Other", variety: "குண்டு", netWeight: "1700 kg", place: "Paramathi Velur" },
-        { id: 11, customerName: "Gopi Traders", waymentNo: "SAGO011", vehicleNo: "TN14LL1234", materialType: "Tapioca", variety: "நீலம்", netWeight: "2500 kg", place: "Puduchatram" },
-        { id: 12, customerName: "Senthil Mill", waymentNo: "SAGO012", vehicleNo: "TN11MM5678", materialType: "Other", variety: "நீலம்", netWeight: "1850 kg", place: "Konganapuram" },
-        { id: 13, customerName: "Lakshmi Traders", waymentNo: "SAGO013", vehicleNo: "TN27NN3456", materialType: "Tapioca", variety: "குண்டு", netWeight: "2750 kg", place: "Vennandur" },
-        { id: 14, customerName: "Maruthi Co.", waymentNo: "SAGO014", vehicleNo: "TN23OO9012", materialType: "Other", variety: "குண்டு", netWeight: "1950 kg", place: "Veerapandi" },
-        { id: 15, customerName: "Senthil Mill", waymentNo: "SAGO012", vehicleNo: "TN11MM5678", materialType: "Other", variety: "நீலம்", netWeight: "1850 kg", place: "Konganapuram" },
-        { id: 16, customerName: "Lakshmi Traders", waymentNo: "SAGO013", vehicleNo: "TN27NN3456", materialType: "Tapioca", variety: "குண்டு", netWeight: "2750 kg", place: "Vennandur" },
-        { id: 17, customerName: "Maruthi Co.", waymentNo: "SAGO014", vehicleNo: "TN23OO9012", materialType: "Other", variety: "குண்டு", netWeight: "1950 kg", place: "Veerapandi" },
-        { id: 18, customerName: "Bala Traders", waymentNo: "SAGO015", vehicleNo: "TN19PP8888", materialType: "Tapioca", variety: "நீலம்", netWeight: "2600 kg", place: "Sendamangalam" },
-      ];
-
+        { id: 1, date: "2024-01-10", weightNo: "WT101", pattiyalNo: "PT101", vehicleNo: "TN29N1212", partLoad: "Full Load", inTime: "08:30 AM", outTime: "06:45 PM", completedDate: "2024-01-12", totalAmount: "₹25,000", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer A", materialType: "TapiocaRoot", variety: "V1", netWeight: "1000kg", place: "Salem" },
+        { id: 2, date: "2024-01-11", weightNo: "WT102", pattiyalNo: "PT102", vehicleNo: "TN45Z2321", partLoad: "Partial Load", inTime: "09:15 AM", outTime: "07:30 PM", completedDate: "2024-01-13", totalAmount: "₹18,500", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer B", materialType: "Others", variety: "V2", netWeight: "750kg", place: "Namakkal" },
+        { id: 3, date: "2024-01-12", weightNo: "WT103", pattiyalNo: "PT103", vehicleNo: "TN37A5678", partLoad: "Full Load", inTime: "07:45 AM", outTime: "08:15 PM", completedDate: "2024-01-14", totalAmount: "₹32,000", paymentStatus: "Pending", deliveryStatus: "Delivered", customerName: "Customer A", materialType: "TapiocaRoot", variety: "V1", netWeight: "1200kg", place: "Erode" },
+        { id: 4, date: "2024-01-13", weightNo: "WT104", pattiyalNo: "PT104", vehicleNo: "TN10B1234", partLoad: "Partial Load", inTime: "10:00 AM", outTime: "05:30 PM", completedDate: "2024-01-15", totalAmount: "₹22,750", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer C", materialType: "Others", variety: "V3", netWeight: "900kg", place: "Karur" },
+        { id: 5, date: "2024-01-14", weightNo: "WT105", pattiyalNo: "PT105", vehicleNo: "TN11C5678", partLoad: "Full Load", inTime: "07:15 AM", outTime: "09:00 PM", completedDate: "2024-01-16", totalAmount: "₹28,900", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer B", materialType: "TapiocaRoot", variety: "V2", netWeight: "1100kg", place: "Tiruchengode" },
+        { id: 6, date: "2024-01-15", weightNo: "WT106", pattiyalNo: "PT106", vehicleNo: "TN22D9876", partLoad: "Partial Load", inTime: "08:00 AM", outTime: "07:00 PM", completedDate: "2024-01-17", totalAmount: "₹20,000", paymentStatus: "Pending", deliveryStatus: "Delivered", customerName: "Customer D", materialType: "Others", variety: "V4", netWeight: "800kg", place: "Coimbatore" },
+        { id: 7, date: "2024-01-16", weightNo: "WT107", pattiyalNo: "PT107", vehicleNo: "TN33F4321", partLoad: "Full Load", inTime: "06:45 AM", outTime: "08:30 PM", completedDate: "2024-01-18", totalAmount: "₹30,500", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer E", materialType: "TapiocaRoot", variety: "V3", netWeight: "1150kg", place: "Dindigul" },
+        { id: 8, date: "2024-01-17", weightNo: "WT108", pattiyalNo: "PT108", vehicleNo: "TN48G8765", partLoad: "Partial Load", inTime: "09:30 AM", outTime: "06:00 PM", completedDate: "2024-01-19", totalAmount: "₹19,800", paymentStatus: "Unpaid", deliveryStatus: "Pending", customerName: "Customer F", materialType: "Others", variety: "V5", netWeight: "700", place: "Dindigul" },
+        { id: 9, date: "2024-01-13", weightNo: "WT104", pattiyalNo: "PT104", vehicleNo: "TN10B1234", partLoad: "Partial Load", inTime: "10:00 AM", outTime: "05:30 PM", completedDate: "2024-01-15", totalAmount: "₹22,750", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer C", materialType: "Others", variety: "V3", netWeight: "900kg", place: "Karur" },
+        { id: 10, date: "2024-01-14", weightNo: "WT105", pattiyalNo: "PT105", vehicleNo: "TN11C5678", partLoad: "Full Load", inTime: "07:15 AM", outTime: "09:00 PM", completedDate: "2024-01-16", totalAmount: "₹28,900", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer B", materialType: "TapiocaRoot", variety: "V2", netWeight: "1100kg", place: "Tiruchengode" },
+        { id: 11, date: "2024-01-15", weightNo: "WT106", pattiyalNo: "PT106", vehicleNo: "TN22D9876", partLoad: "Partial Load", inTime: "08:00 AM", outTime: "07:00 PM", completedDate: "2024-01-17", totalAmount: "₹20,000", paymentStatus: "Pending", deliveryStatus: "Delivered", customerName: "Customer D", materialType: "Others", variety: "V4", netWeight: "800kg", place: "Coimbatore" },
+        { id: 12, date: "2024-01-16", weightNo: "WT107", pattiyalNo: "PT107", vehicleNo: "TN33F4321", partLoad: "Full Load", inTime: "06:45 AM", outTime: "08:30 PM", completedDate: "2024-01-18", totalAmount: "₹30,500", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer E", materialType: "TapiocaRoot", variety: "V3", netWeight: "1150kg", place: "Dindigul" },
+        { id: 13, date: "2024-01-17", weightNo: "WT108", pattiyalNo: "PT108", vehicleNo: "TN48G8765", partLoad: "Partial Load", inTime: "09:30 AM", outTime: "06:00 PM", completedDate: "2024-01-19", totalAmount: "₹19,800", paymentStatus: "Unpaid", deliveryStatus: "Pending", customerName: "Customer F", materialType: "Others", variety: "V5", netWeight: "700", place: "Dindigul" },
+    ];      
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Apply filters to mockData
       let filteredData = mockData.filter(item => {
         let match = true;
-        if (filters.customerName && !item.customerName.toLowerCase().includes(filters.customerName.toLowerCase())) {
+        if (filters.customerName && !item.customerName?.toLowerCase().includes(filters.customerName.toLowerCase())) {
           match = false;
         }
-        if (filters.waymentNo && !item.waymentNo.toLowerCase().includes(filters.waymentNo.toLowerCase())) {
+        if (filters.pattiyalNo && !item.pattiyalNo.toLowerCase().includes(filters.pattiyalNo.toLowerCase())) {
           match = false;
         }
         if (filters.vehicleNo && !item.vehicleNo.toLowerCase().includes(filters.vehicleNo.toLowerCase())) {
           match = false;
         }
-        // Add more filter conditions as needed
+        if (filters.materialType && item.materialType !== filters.materialType) {
+          match = false;
+        }
+        // Add more filter conditions as needed based on your mock data fields
         return match;
       });
 
-      setWayment(filteredData);
+      setPattiyal(filteredData);
     } catch (err) {
-      console.error("Error fetching wayment:", err);
-      setError("Failed to fetch wayment");
-      setWayment([]);
+      console.error("Error fetching Pattiyal:", err);
+      setError("Failed to fetch Pattiyal");
+      setPattiyal([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchWayment();
+    fetchPattiyal();
   }, [filters]); // Refetch when filters change
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setSelectAll(checked);
-    setSelectedIds(checked ? wayment.map((t) => t.id) : []);
+    setSelectedIds(checked ? Pattiyal.map((t) => t.id) : []);
   };
 
   const handleCheckboxChange = (id: number) => {
@@ -113,7 +113,7 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
   const handleRefresh = () => {
     setFilters({}); // Clear filters on refresh
     setLocalFilters({}); // Clear local filters
-    fetchWayment();
+    fetchPattiyal();
   };
 
   const handleFilterToggle = () => {
@@ -142,8 +142,8 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
   };
 
   useEffect(() => {
-    setSelectAll(wayment.length > 0 && selectedIds.length === wayment.length);
-  }, [selectedIds, wayment]);
+    setSelectAll(Pattiyal.length > 0 && selectedIds.length === Pattiyal.length);
+  }, [selectedIds, Pattiyal]);
 
   if (loading) {
     return (
@@ -152,7 +152,7 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
           <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
         </div>
         <div className="text-lg font-medium text-gray-700">
-          Loading Wayment List...
+          Loading Pattiyal List...
         </div>
         <div className="text-sm text-gray-500">
           Please wait while we fetch the data
@@ -177,16 +177,16 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
     );
   }
 
-  if (wayment.length === 0 && Object.keys(filters).length === 0) {
+  if (Pattiyal.length === 0 && Object.keys(filters).length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-500">No wayment data available.</div>
+        <div className="text-lg text-gray-500">No Pattiyal data available.</div>
       </div>
     );
-  } else if (wayment.length === 0 && Object.keys(filters).length > 0) {
+  } else if (Pattiyal.length === 0 && Object.keys(filters).length > 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64">
-        <div className="text-lg text-gray-500">No wayment found matching your filters.</div>
+        <div className="text-lg text-gray-500">No Pattiyal found matching your filters.</div>
         <button
           onClick={handleClearFilters}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -225,7 +225,7 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
                 id="bulkActionsBtn"
                 onClick={() => {
                   setSelectAll(true);
-                  setSelectedIds(wayment.map((t) => t.id));
+                  setSelectedIds(Pattiyal.map((t) => t.id));
                 }}
               >
                 <i className="ri-stack-fill mr-1"></i>
@@ -240,9 +240,9 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
                 <i className="ri-printer-line mr-1"></i>
                 Print
               </button>
-              <button className="btn-sm !border-[#cfd7df] text-[#12375d] bg-white hover:bg-[#ebeff3] text-sm" id="summaryBtn">
+              <button className="btn-sm !border-[#cfd7df] text-[#12375d] bg-white hover:bg-[#ebeff3] text-sm" id="TradersBtn">
                 <i className="ri-sticky-note-line mr-1"></i>
-                Summary
+                Traders
               </button>
               <button className="btn-sm !border-[#cfd7df] text-[#12375d] bg-white hover:bg-[#ebeff3] text-sm" id="downloadBtn">
                 <i className="ri-arrow-down-line mr-1"></i>
@@ -285,7 +285,7 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
       <div className="bg-[#ebeff3]">
         {selectedIds.length > 1 && (
           <div className="fixed top-42 left-1/2 transform -translate-x-1/2 z-50 badge-selected">
-            {selectedIds.length} Wayments selected
+            {selectedIds.length} Pattiyals selected
           </div>
         )}
 
@@ -295,13 +295,7 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
               <thead className="sticky-table-header">
                 <tr>
                   <th className="th-cell" id="checkboxColumn">
-                    <input
-                      type="checkbox"
-                      id="selectAll"
-                      className="form-check"
-                      checked={selectAll}
-                      onChange={handleSelectAll}
-                    />
+                    <input type="checkbox" id="selectAll" className="form-check" checked={selectAll} onChange={handleSelectAll} />
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
@@ -310,80 +304,94 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Customer Name</span>
-                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                      <span>Date</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Wayment No</span>
-                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                      <span>Weight No</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Pattiyal No</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
                       <span>Vehicle No</span>
-                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                    </div>
-                  </th>
-
-                  <th className="th-cell">
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Material Type</span>
-                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Variety</span>
-                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                      <span>Part Load</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Net Weight</span>
-                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                      <span>Completed Date</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Total Amount</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="last-th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Place</span>
-                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                      <span>Payment Status</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  {/* Adding Delivery Status column */}
+                  <th className="last-th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Delivery Status</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {wayment.map((payment, index) => (
+                {Pattiyal.map((payment, index) => (
                   <tr
-                    key={payment.id}
-                    className={`group hover:bg-[#f5f7f9] text-sm cursor-pointer ${
-                      selectedIds.includes(payment.id)
-                        ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]"
-                        : ""
-                    }`}
-                  >
-                    <td className="td-cell">
-                      <input
-                        type="checkbox"
-                        className="form-check"
-                        checked={selectedIds.includes(payment.id)}
-                        onChange={() => handleCheckboxChange(payment.id)}
-                      />
-                    </td>
+                  key={payment.id}
+                  className={`group hover:bg-[#f5f7f9] text-sm cursor-pointer ${
+                    selectedIds.includes(payment.id)
+                      ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]"
+                      : ""
+                  }`}>
+                  <td className="td-cell">
+                    <input
+                      type="checkbox"
+                      className="form-check"
+                      checked={selectedIds.includes(payment.id)}
+                      onChange={() => handleCheckboxChange(payment.id)}
+                    />
+                  </td>
+                
                     <td className="td-cell">
                       <span className="float-left">{index + 1}</span>
                       <span className="float-right cursor-pointer">
                         <i className="p-1 rounded border border-[#cfd7df] text-[#4d5e6c] ri-pencil-fill opacity-0 group-hover:opacity-100"></i>
                       </span>
                     </td>
-                    <td className="td-cell">{payment.customerName}</td>
-                    <td className="td-cell">{payment.waymentNo}</td>
+                    <td className="td-cell">{payment.date}</td>
+                    <td className="td-cell">{payment.weightNo}</td>
+                    <td className="td-cell">{payment.pattiyalNo}</td> {/* Corrected casing */}
                     <td className="td-cell">{payment.vehicleNo}</td>
-                    <td className="td-cell">{payment.materialType}</td>
-                    <td className="td-cell">{payment.variety}</td>
-                    <td className="td-cell">{payment.netWeight}</td>
-                    <td className="last-td-cell">{payment.place}</td>
+                    <td className="td-cell">{payment.partLoad}</td>
+                    <td className="td-cell">{payment.completedDate}</td>
+                    <td className="td-cell">{payment.totalAmount}</td>
+                    <td className="td-cell">{payment.paymentStatus}</td>
+                    <td className="last-td-cell">{payment.deliveryStatus}</td> {/* Added Delivery Status cell */}
                   </tr>
                 ))}
               </tbody>
@@ -395,8 +403,8 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
       {/* Footer */}
       <footer className="bg-[#ebeff3] py-3 h-[56.9px] px-4 flex items-center justify-start">
         <span className="text-sm">
-          Showing <span className="text-red-600">{wayment.length}</span> of{" "}
-          <span className="text-blue-600">{wayment.length}</span>
+          Showing <span className="text-red-600">{Pattiyal.length}</span> of{" "}
+          <span className="text-blue-600">{Pattiyal.length}</span>
         </span>
       </footer>
 
@@ -428,40 +436,39 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
 
           {/* Scrollable Content */}
           <div className="p-4 overflow-y-auto flex-1">
-               <div className="mb-4">
-                           <label className="filter-label">Customer Name</label>
-                           <input
-                             type="text"
-                             placeholder="Enter Customer Name"
-                             className="form-control"
-                              
-                            
-                           />
-                         </div>
-                         <div className="mb-4">
-                           <label className="filter-label">Wayment No</label>
-                           <input
-                             type="text"
-                             className="form-control"
-                           
-                             placeholder="Enter Wayment No"
-                              
-                           />
-                         </div>
-                         <div className="mb-4">
-                           <label className="filter-label">Material Type</label>
-                           <RadioGroup
-                                   name="materialType"
-                                   options={[
-                                     { value: "TapiocaRoot", label: "Tapioca Root" },
-                                     { value: "Others", label: "Others" },
-                                   ]}
-                                   defaultValue={localFilters.materialType || "TapiocaRoot"}
-                                   
-                                 />
-                         </div>
-               </div>
-
+            <div className="mb-4">
+              <label className="filter-label">Company Name</label>
+              <input 
+                type="text" 
+                placeholder="Enter company name" 
+                className="form-control"
+                
+                 
+              />
+            </div>
+            <div className="mb-4">
+              <label className="filter-label">Location</label>
+              <input 
+                type="text" 
+                placeholder="Enter location" 
+                className="form-control"
+                 
+                
+              />
+            </div>
+            <div className="mb-4">
+              <label className="filter-label">Status</label>
+              <select 
+                className="form-control"
+                 
+                 
+              >
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
           <div className="p-2 border-t border-[#dee2e6] flex justify-end gap-2">
             <button className="btn-sm btn-light" onClick={handleClearFilters}>
               Reset All
@@ -476,4 +483,4 @@ const WaymentPending: React.FC<WaymentPendingProps> = ({ activeReport, activeCat
   );
 };
 
-export default WaymentPending;
+export default PattiyalTraders;

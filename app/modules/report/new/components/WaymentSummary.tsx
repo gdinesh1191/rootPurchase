@@ -1,133 +1,479 @@
-const WaymentSummary = () => {
-    const vehicles = [
-        { id: 1, number: "TN29N1212", owner: "Arumugam", chassis: "AD33323C3212", fcExpiry: "12/02/2023", status: "Active", nextDue: "22/08/2025", year: 2017 },
-        { id: 2, number: "TN45Z2321", owner: "Kumar", chassis: "ZX92133QWER", fcExpiry: "01/05/2024", status: "In-Active", nextDue: "15/09/2025", year: 2015 },
-        { id: 3, number: "TN37A5678", owner: "Ravi", chassis: "CH45321ZX", fcExpiry: "30/11/2022", status: "Active", nextDue: "10/10/2025", year: 2019 },
-        { id: 4, number: "TN10B1234", owner: "Suresh", chassis: "GH12345JKL", fcExpiry: "05/04/2023", status: "Active", nextDue: "01/12/2025", year: 2016 },
-        { id: 5, number: "TN11C5678", owner: "Venkatesh", chassis: "KL98765YTR", fcExpiry: "10/06/2024", status: "In-Active", nextDue: "25/01/2026", year: 2014 },
-        { id: 6, number: "TN12D9101", owner: "Mohan", chassis: "MN56789ASD", fcExpiry: "20/03/2023", status: "Active", nextDue: "15/05/2026", year: 2018 },
-        { id: 7, number: "TN13E1213", owner: "Rajesh", chassis: "PO34567FGH", fcExpiry: "01/12/2022", status: "In-Active", nextDue: "10/04/2026", year: 2013 },
-        { id: 8, number: "TN14F1415", owner: "Balaji", chassis: "QR56789LKJ", fcExpiry: "25/10/2023", status: "Active", nextDue: "05/02/2026", year: 2020 },
-        { id: 9, number: "TN15G1617", owner: "Saravanan", chassis: "ST45678MNB", fcExpiry: "30/08/2022", status: "In-Active", nextDue: "20/06/2026", year: 2012 },
-        { id: 10, number: "TN16H1819", owner: "Prakash", chassis: "UV12345XCV", fcExpiry: "15/09/2024", status: "Active", nextDue: "30/07/2026", year: 2015 },
-        { id: 11, number: "TN17J2021", owner: "Naveen", chassis: "WX56789ZXC", fcExpiry: "18/01/2023", status: "Active", nextDue: "12/03/2026", year: 2011 },
-        { id: 12, number: "TN18K2223", owner: "Dinesh", chassis: "YU34567BNM", fcExpiry: "12/07/2023", status: "In-Active", nextDue: "22/08/2026", year: 2016 },
-        { id: 13, number: "TN19L2425", owner: "Sathish", chassis: "IO78945VFR", fcExpiry: "11/02/2024", status: "Active", nextDue: "18/10/2026", year: 2013 },
-        { id: 14, number: "TN20M2627", owner: "Karthik", chassis: "PL90876TRE", fcExpiry: "29/05/2022", status: "In-Active", nextDue: "09/09/2026", year: 2014 },
-        { id: 15, number: "TN21N2829", owner: "Vijay", chassis: "MJ12346UYT", fcExpiry: "06/11/2024", status: "Active", nextDue: "30/11/2026", year: 2017 },
-        { id: 16, number: "TN22P3031", owner: "Manoj", chassis: "NH54321REW", fcExpiry: "03/08/2023", status: "In-Active", nextDue: "01/03/2026", year: 2010 },
-        { id: 17, number: "TN23Q3233", owner: "Ramesh", chassis: "BT65432PLK", fcExpiry: "12/04/2023", status: "Active", nextDue: "04/06/2026", year: 2019 },
-        { id: 18, number: "TN24R3435", owner: "Selvam", chassis: "CW87654QAZ", fcExpiry: "09/10/2024", status: "Active", nextDue: "15/08/2026", year: 2018 },
-        { id: 19, number: "TN25S3637", owner: "Ganesh", chassis: "XZ12345WSX", fcExpiry: "22/09/2023", status: "In-Active", nextDue: "19/12/2026", year: 2012 },
-        { id: 20, number: "TN26T3839", owner: "Harish", chassis: "CV09876EDC", fcExpiry: "17/06/2022", status: "Active", nextDue: "07/07/2026", year: 2016 },
-        { id: 21, number: "TN27U4041", owner: "Yogesh", chassis: "VB123456LKJ", fcExpiry: "05/03/2022", status: "In-Active", nextDue: "10/10/2026", year: 2011 },
-        { id: 22, number: "TN28V4243", owner: "Lokesh", chassis: "ZXCVB12345", fcExpiry: "12/08/2023", status: "Active", nextDue: "01/02/2026", year: 2020 },
-        { id: 23, number: "TN29W4445", owner: "Anand", chassis: "QAZWSX0987", fcExpiry: "15/09/2022", status: "Active", nextDue: "25/03/2026", year: 2015 },
-        { id: 24, number: "TN30X4647", owner: "Deepak", chassis: "LKJHGF5678", fcExpiry: "21/12/2023", status: "In-Active", nextDue: "12/12/2026", year: 2013 },
-        { id: 25, number: "TN31Y4849", owner: "Ashok", chassis: "MNBVCX4321", fcExpiry: "30/11/2024", status: "Active", nextDue: "03/01/2027", year: 2017 },
-        { id: 26, number: "TN32Z5051", owner: "Jagan", chassis: "POIUYT7890", fcExpiry: "11/05/2022", status: "In-Active", nextDue: "14/02/2026", year: 2012 },
-        { id: 27, number: "TN33A5253", owner: "Ragul", chassis: "ASDFGH3210", fcExpiry: "16/07/2024", status: "Active", nextDue: "17/05/2026", year: 2019 },
-        { id: 28, number: "TN34B5455", owner: "Naresh", chassis: "ZXCVBN5643", fcExpiry: "08/01/2023", status: "Active", nextDue: "20/06/2026", year: 2014 },
-        { id: 29, number: "TN35C5657", owner: "Surya", chassis: "PLMKJN9087", fcExpiry: "19/02/2023", status: "In-Active", nextDue: "10/04/2026", year: 2016 },
-        { id: 30, number: "TN36D5859", owner: "Jeeva", chassis: "XSWQAZ2345", fcExpiry: "07/10/2023", status: "Active", nextDue: "15/05/2026", year: 2018 },
-        { id: 31, number: "TN37E6061", owner: "Shankar", chassis: "EDCRFV0987", fcExpiry: "25/03/2022", status: "In-Active", nextDue: "06/06/2026", year: 2010 },
-        { id: 32, number: "TN38F6263", owner: "Bhaskar", chassis: "UJMNBV6543", fcExpiry: "18/08/2023", status: "Active", nextDue: "09/07/2026", year: 2015 },
-        { id: 33, number: "TN39G6465", owner: "Siva", chassis: "RFVTGB1234", fcExpiry: "23/06/2024", status: "Active", nextDue: "13/09/2026", year: 2019 },
-        { id: 34, number: "TN40H6667", owner: "Parthiban", chassis: "YHNMLK4321", fcExpiry: "02/05/2022", status: "In-Active", nextDue: "11/08/2026", year: 2011 },
-        { id: 35, number: "TN41I6869", owner: "Kishore", chassis: "BGTRFD6789", fcExpiry: "01/09/2023", status: "Active", nextDue: "16/12/2026", year: 2016 },
-        { id: 36, number: "TN42J7071", owner: "Abdul", chassis: "NJMKIU7890", fcExpiry: "28/02/2024", status: "In-Active", nextDue: "22/10/2026", year: 2013 },
-        { id: 37, number: "TN43K7273", owner: "Siddharth", chassis: "VCXZAS1234", fcExpiry: "17/12/2022", status: "Active", nextDue: "03/11/2026", year: 2017 },
-        { id: 38, number: "TN44L7475", owner: "Ilayaraja", chassis: "REWQAZ7654", fcExpiry: "04/06/2023", status: "In-Active", nextDue: "28/12/2026", year: 2012 },
-        { id: 39, number: "TN45M7677", owner: "Vimal", chassis: "MLKJNH5432", fcExpiry: "20/10/2023", status: "Active", nextDue: "18/01/2027", year: 2014 },
-        { id: 40, number: "TN46N7879", owner: "Natarajan", chassis: "POIUYT8765", fcExpiry: "06/11/2024", status: "Active", nextDue: "08/03/2027", year: 2018 },
-    ];
+ // components/Reports/WaymentSummary.tsx
+'use client';
 
-    return (
-        <div className="bg-[#ebeff3]">
-            <div className="mx-2  h-[calc(100vh-129px)] overflow-hidden rounded-lg bg-white">
-                <div className="h-full overflow-y-auto">
-                    <table className="w-full border-collapse">
-                        <thead className="sticky-table-header">
-                            <tr>
-                                <th className="th-cell" id="checkboxColumn">
-                                    <input type="checkbox" id="selectAll" className="form-check" />
-                                </th>
-                                <th className="th-cell">
-                                    <div className="flex justify-between items-center gap-1">
-                                        <span>S.No.</span>
-                                    </div>
-                                </th>
-                                <th className="th-cell">
-                                    <div className="flex justify-between items-center gap-1">
-                                        <span>Vehicle Number</span>
-                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                    </div>
-                                </th>
-                                <th className="th-cell">
-                                    <div className="flex justify-between items-center gap-1">
-                                        <span>Owner Name</span>
-                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                    </div>
-                                </th>
-                                <th className="th-cell">
-                                    <div className="flex justify-between items-center gap-1">
-                                        <span>Chassis Number</span>
-                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                    </div>
-                                </th>
-                                <th className="th-cell">
-                                    <div className="flex justify-between items-center gap-1">
-                                        <span>FC Expiry Date</span>
-                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                    </div>
-                                </th>
-                                <th className="th-cell">
-                                    <div className="flex justify-between items-center gap-1">
-                                        <span>Status</span>
-                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                    </div>
-                                </th>
-                                <th className="th-cell">
-                                    <div className="flex justify-between items-center gap-1">
-                                        <span>Next Due</span>
-                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                    </div>
-                                </th>
-                                <th className="last-th-cell">
-                                    <div className="flex justify-between items-center gap-1">
-                                        <span>Year</span>
-                                        <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {vehicles.map((vehicle, index) => (
-                                <tr key={vehicle.id} className="group hover:bg-[#f5f7f9] text-sm cursor-pointer">
-                                    <td className="td-cell">
-                                        <input type="checkbox" className="form-check" />
-                                    </td>
-                                    <td className="td-cell">
-                                        <span className="float-left">{index + 1}</span>
-                                        <span className="float-right cursor-pointer">
-                                            <i className="p-1 rounded border border-[#cfd7df] text-[#4d5e6c] ri-pencil-fill opacity-0 group-hover:opacity-100"></i>
-                                        </span>
-                                    </td>
-                                    <td className="td-cell">{vehicle.number}</td>
-                                    <td className="td-cell">{vehicle.owner}</td>
-                                    <td className="td-cell">{vehicle.chassis}</td>
-                                    <td className="td-cell">{vehicle.fcExpiry}</td>
-                                    <td className="td-cell">{vehicle.status}</td>
-                                    <td className="td-cell">{vehicle.nextDue}</td>
-                                    <td className="last-td-cell">{vehicle.year}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+import { RadioGroup } from '@/app/utils/form-controls';
+import { useEffect, useState } from 'react';
+// Assuming DatePicker and RadioGroup are available at these paths
+// import DatePicker from '@/app/utils/datepicker';
+// import { RadioGroup } from '@/app/utils/form-controls';
+
+
+// Define the Wayment interface as per AllWaymentList
+interface Wayment {
+  id: number;
+  customerName: string;
+  waymentNo: string;
+  vehicleNo: string;
+  materialType: string;
+  variety: string;
+  netWeight: string;
+  place: string;
+}
+
+interface WaymentSummaryProps {
+  activeReport: string | null;
+  activeCategory: string | null;
+}
+
+const WaymentSummary: React.FC<WaymentSummaryProps> = ({ activeReport, activeCategory }) => {
+  const [wayment, setWayment] = useState<Wayment[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  // const [materialType, setMaterialType] = useState<string>("TapiocaRoot"); // Not used in current display, but kept if needed for filtering
+
+  // Filter states
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [filters, setFilters] = useState<any>({}); // Applied filters
+  const [localFilters, setLocalFilters] = useState<any>({}); // Filters being set in the sidebar
+
+  const fetchWayment = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Mock data for wayment as provided in AllWaymentList
+      const mockData = [
+        { id: 1, customerName: "Kumar Traders", waymentNo: "SAGO001", vehicleNo: "TN38AA1234", materialType: "Tapioca", variety: "நீலம்", netWeight: "2500 kg", place: "Salem" },
+        { id: 2, customerName: "Selvam Agencies", waymentNo: "SAGO002", vehicleNo: "TN28BB5678", materialType: "Tapioca", variety: "குண்டு", netWeight: "2300 kg", place: "Namakkal" },
+        { id: 3, customerName: "Rani Traders", waymentNo: "SAGO003", vehicleNo: "TN30CC3456", materialType: "Other", variety: "நீலம்", netWeight: "1800 kg", place: "Rasipuram" },
+        { id: 4, customerName: "Sabari Mill", waymentNo: "SAGO004", vehicleNo: "TN32DD9012", materialType: "Tapioca", variety: "குண்டு", netWeight: "2000 kg", place: "Attur" },
+        { id: 5, customerName: "Sri Sago Co.", waymentNo: "SAGO005", vehicleNo: "TN12EE8888", materialType: "Other", variety: "குண்டு", netWeight: "1900 kg", place: "Tiruchengode" },
+        { id: 6, customerName: "Vel Traders", waymentNo: "SAGO006", vehicleNo: "TN29FF1122", materialType: "Tapioca", variety: "நீலம்", netWeight: "2600 kg", place: "Edappadi" },
+        { id: 7, customerName: "Shree Mill", waymentNo: "SAGO007", vehicleNo: "TN25GG3344", materialType: "Tapioca", variety: "குண்டு", netWeight: "2200 kg", place: "Mallasamudram" },
+        { id: 8, customerName: "Sundar & Sons", waymentNo: "SAGO008", vehicleNo: "TN58HH5566", materialType: "Other", variety: "நீலம்", netWeight: "2100 kg", place: "Komarapalayam" },
+        { id: 9, customerName: "Sago Gold Traders", waymentNo: "SAGO009", vehicleNo: "TN20JJ7788", materialType: "Tapioca", variety: "நீலம்", netWeight: "2400 kg", place: "Tharamangalam" },
+        { id: 10, customerName: "Anbu Sago", waymentNo: "SAGO010", vehicleNo: "TN45KK9900", materialType: "Other", variety: "குண்டு", netWeight: "1700 kg", place: "Paramathi Velur" },
+        { id: 11, customerName: "Gopi Traders", waymentNo: "SAGO011", vehicleNo: "TN14LL1234", materialType: "Tapioca", variety: "நீலம்", netWeight: "2500 kg", place: "Puduchatram" },
+        { id: 12, customerName: "Senthil Mill", waymentNo: "SAGO012", vehicleNo: "TN11MM5678", materialType: "Other", variety: "நீலம்", netWeight: "1850 kg", place: "Konganapuram" },
+        { id: 13, customerName: "Lakshmi Traders", waymentNo: "SAGO013", vehicleNo: "TN27NN3456", materialType: "Tapioca", variety: "குண்டு", netWeight: "2750 kg", place: "Vennandur" },
+        { id: 14, customerName: "Maruthi Co.", waymentNo: "SAGO014", vehicleNo: "TN23OO9012", materialType: "Other", variety: "குண்டு", netWeight: "1950 kg", place: "Veerapandi" },
+        { id: 15, customerName: "Senthil Mill", waymentNo: "SAGO012", vehicleNo: "TN11MM5678", materialType: "Other", variety: "நீலம்", netWeight: "1850 kg", place: "Konganapuram" },
+        { id: 16, customerName: "Lakshmi Traders", waymentNo: "SAGO013", vehicleNo: "TN27NN3456", materialType: "Tapioca", variety: "குண்டு", netWeight: "2750 kg", place: "Vennandur" },
+        { id: 17, customerName: "Maruthi Co.", waymentNo: "SAGO014", vehicleNo: "TN23OO9012", materialType: "Other", variety: "குண்டு", netWeight: "1950 kg", place: "Veerapandi" },
+        { id: 18, customerName: "Bala Traders", waymentNo: "SAGO015", vehicleNo: "TN19PP8888", materialType: "Tapioca", variety: "நீலம்", netWeight: "2600 kg", place: "Sendamangalam" },
+      ];
+
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Apply filters to mockData
+      let filteredData = mockData.filter(item => {
+        let match = true;
+        if (filters.customerName && !item.customerName.toLowerCase().includes(filters.customerName.toLowerCase())) {
+          match = false;
+        }
+        if (filters.waymentNo && !item.waymentNo.toLowerCase().includes(filters.waymentNo.toLowerCase())) {
+          match = false;
+        }
+        if (filters.vehicleNo && !item.vehicleNo.toLowerCase().includes(filters.vehicleNo.toLowerCase())) {
+          match = false;
+        }
+        // Add more filter conditions as needed
+        return match;
+      });
+
+      setWayment(filteredData);
+    } catch (err) {
+      console.error("Error fetching wayment:", err);
+      setError("Failed to fetch wayment");
+      setWayment([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWayment();
+  }, [filters]); // Refetch when filters change
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setSelectAll(checked);
+    setSelectedIds(checked ? wayment.map((t) => t.id) : []);
+  };
+
+  const handleCheckboxChange = (id: number) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
+  };
+
+  const handleRefresh = () => {
+    setFilters({}); // Clear filters on refresh
+    setLocalFilters({}); // Clear local filters
+    fetchWayment();
+  };
+
+  const handleFilterToggle = () => {
+    setIsSidebarOpen(true);
+    setLocalFilters(filters); // Initialize local filters with currently applied filters
+  };
+
+  const handleFilterClose = () => {
+    setIsSidebarOpen(false);
+  };
+
+  const handleLocalFilterChange = (key: string, value: string) => {
+    setLocalFilters((prev: any) => ({ ...prev, [key]: value }));
+  };
+
+  const handleApplyFilters = () => {
+    setFilters(localFilters); // Apply the local filters to the main filters state
+    setIsSidebarOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    const clearedFilters = {};
+    setLocalFilters(clearedFilters);
+    setFilters(clearedFilters);
+    setIsSidebarOpen(false); // Close sidebar after clearing
+  };
+
+  useEffect(() => {
+    setSelectAll(wayment.length > 0 && selectedIds.length === wayment.length);
+  }, [selectedIds, wayment]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
+        <div className="relative">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+        </div>
+        <div className="text-lg font-medium text-gray-700">
+          Loading Wayment List...
+        </div>
+        <div className="text-sm text-gray-500">
+          Please wait while we fetch the data
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64 flex-col">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mx-2 mb-2">
+          <span className="block sm:inline">{error}</span>
+          <button
+            onClick={handleRefresh}
+            className="ml-2 underline hover:no-underline"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (wayment.length === 0 && Object.keys(filters).length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg text-gray-500">No wayment data available.</div>
+      </div>
+    );
+  } else if (wayment.length === 0 && Object.keys(filters).length > 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <div className="text-lg text-gray-500">No wayment found matching your filters.</div>
+        <button
+          onClick={handleClearFilters}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Clear Filters
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <main className="flex-1">
+      <h4 className="text-l font-medium p-2 text-[#009333]">
+        {activeCategory} {activeReport} Report
+      </h4>
+
+      {/* Header Section */}
+      <div className="flex justify-between items-center px-1.5 py-1.5 bg-[#ebeff3]">
+        <div className="flex items-center space-x-2 ml-2">
+          {!selectedIds.length && (
+            <>
+              <button className="btn-sm !border-[#cfd7df] text-[#12375d] bg-white hover:bg-[#ebeff3] text-sm">
+                <i className="ri-table-fill mr-1"></i>
+                <span className="text-sm">Table</span>
+                <i className="ri-arrow-down-s-line ml-1"></i>
+              </button>
+
+              <div className="relative inline-block">
+                <button id="viewModeBtn" className="btn-sm !border-transparent !text-[#384551] hover:bg-[#dce0e5] hover:border-[#ebeff3] text-sm">
+                  <i className="ri-layout-5-line"></i>
+                </button>
+              </div>
+
+              <button
+                className="btn-sm !border-transparent !text-[#384551] hover:bg-[#dce0e5] hover:border-[#ebeff3] text-sm"
+                id="bulkActionsBtn"
+                onClick={() => {
+                  setSelectAll(true);
+                  setSelectedIds(wayment.map((t) => t.id));
+                }}
+              >
+                <i className="ri-stack-fill mr-1"></i>
+                Bulk Actions
+              </button>
+            </>
+          )}
+
+          {selectedIds.length > 0 && (
+            <div className="bulk-actions flex items-center space-x-2">
+              <button className="btn-sm !border-[#cfd7df] text-[#12375d] bg-white hover:bg-[#ebeff3] text-sm" id="printBtn">
+                <i className="ri-printer-line mr-1"></i>
+                Print
+              </button>
+              <button className="btn-sm !border-[#cfd7df] text-[#12375d] bg-white hover:bg-[#ebeff3] text-sm" id="summaryBtn">
+                <i className="ri-sticky-note-line mr-1"></i>
+                Summary
+              </button>
+              <button className="btn-sm !border-[#cfd7df] text-[#12375d] bg-white hover:bg-[#ebeff3] text-sm" id="downloadBtn">
+                <i className="ri-arrow-down-line mr-1"></i>
+                Download
+              </button>
+              <button className="btn-sm !border-[#cfd7df] text-[#12375d] bg-white hover:bg-[#ebeff3] text-sm" id="deleteBtn">
+                <i className="ri-delete-bin-6-line mr-1"></i>
+                Delete
+              </button>
+              <button
+                className="btn-sm !border-[#cfd7df] text-[#12375d] bg-white hover:bg-[#ebeff3] text-sm"
+                id="cancelSelectionBtn"
+                onClick={() => setSelectedIds([])}
+              >
+                <i className="ri-close-line mr-1"></i>
+                Cancel Bulk Actions
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center relative space-x-2">
+          <input
+            className="form-control !h-[31px]"
+            type="text"
+            placeholder="Search Vehicle Number"
+            value={localFilters.vehicleNo || ''}
+            onChange={(e) => handleLocalFilterChange('vehicleNo', e.target.value)}
+          />
+          <button
+            className="btn-sm !border-transparent !text-[#384551] hover:bg-[#dce0e5] hover:border-[#ebeff3] text-sm"
+            onClick={handleFilterToggle}
+          >
+            <i className="ri-sort-desc"></i>
+          </button>
+        </div>
+      </div>
+
+      {/* Table Section */}
+      <div className="bg-[#ebeff3]">
+        {selectedIds.length > 1 && (
+          <div className="fixed top-42 left-1/2 transform -translate-x-1/2 z-50 badge-selected">
+            {selectedIds.length} Wayments selected
+          </div>
+        )}
+
+        <div className="mx-2 h-[calc(100vh-187px)] overflow-hidden rounded-lg bg-white">
+          <div className="h-full overflow-y-auto">
+            <table className="w-full">
+              <thead className="sticky-table-header">
+                <tr>
+                  <th className="th-cell" id="checkboxColumn">
+                    <input
+                      type="checkbox"
+                      id="selectAll"
+                      className="form-check"
+                      checked={selectAll}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>S.No.</span>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Customer Name</span>
+                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Wayment No</span>
+                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Vehicle No</span>
+                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                    </div>
+                  </th>
+
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Material Type</span>
+                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Variety</span>
+                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Net Weight</span>
+                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                    </div>
+                  </th>
+                  <th className="last-th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Place</span>
+                      <i className="dropdown-hover ri-arrow-down-s-fill cursor-pointer"></i>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {wayment.map((payment, index) => (
+                  <tr
+                    key={payment.id}
+                    className={`group hover:bg-[#f5f7f9] text-sm cursor-pointer ${
+                      selectedIds.includes(payment.id)
+                        ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]"
+                        : ""
+                    }`}
+                  >
+                    <td className="td-cell">
+                      <input
+                        type="checkbox"
+                        className="form-check"
+                        checked={selectedIds.includes(payment.id)}
+                        onChange={() => handleCheckboxChange(payment.id)}
+                      />
+                    </td>
+                    <td className="td-cell">
+                      <span className="float-left">{index + 1}</span>
+                      <span className="float-right cursor-pointer">
+                        <i className="p-1 rounded border border-[#cfd7df] text-[#4d5e6c] ri-pencil-fill opacity-0 group-hover:opacity-100"></i>
+                      </span>
+                    </td>
+                    <td className="td-cell">{payment.customerName}</td>
+                    <td className="td-cell">{payment.waymentNo}</td>
+                    <td className="td-cell">{payment.vehicleNo}</td>
+                    <td className="td-cell">{payment.materialType}</td>
+                    <td className="td-cell">{payment.variety}</td>
+                    <td className="td-cell">{payment.netWeight}</td>
+                    <td className="last-td-cell">{payment.place}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-[#ebeff3] py-3 h-[56.9px] px-4 flex items-center justify-start">
+        <span className="text-sm">
+          Showing <span className="text-red-600">{wayment.length}</span> of{" "}
+          <span className="text-blue-600">{wayment.length}</span>
+        </span>
+      </footer>
+
+      {/* Offcanvas Sidebar (Filters) */}
+      <div
+        className={`fixed inset-0 z-50 flex justify-end transition-opacity duration-300 ${
+          isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Backdrop */}
+        <div
+          className="fixed inset-0 bg-[rgba(0,0,0,0.5)]"
+          onClick={handleFilterClose}
+        ></div>
+
+        {/* Sidebar Content */}
+        <div
+          className={`relative w-80 mt-[5.4rem] mb-[0.15rem] rounded-tl-[0.375rem] rounded-bl-[0.375rem] bg-white shadow-[0_4px_16px_#27313a66] transform transition-transform duration-300 ${
+            isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+          } flex flex-col`}
+        >
+          {/* Header */}
+          <div className="py-[0.5rem] px-[0.75rem] border-b border-[#dee2e6] flex justify-between items-center">
+            <h5 className="text-sm text-[#12344d]">Add Filters</h5>
+            <button onClick={handleFilterClose} className="text-[#12344d] cursor-pointer">
+              <i className="ri-close-line"></i>
+            </button>
+          </div>
+
+          {/* Scrollable Content */}
+          <div className="p-4 overflow-y-auto flex-1">
+               <div className="mb-4">
+                           <label className="filter-label">Customer Name</label>
+                           <input
+                             type="text"
+                             placeholder="Enter Customer Name"
+                             className="form-control"
+                              
+                            
+                           />
+                         </div>
+                         <div className="mb-4">
+                           <label className="filter-label">Wayment No</label>
+                           <input
+                             type="text"
+                             className="form-control"
+                           
+                             placeholder="Enter Wayment No"
+                              
+                           />
+                         </div>
+                         <div className="mb-4">
+                           <label className="filter-label">Material Type</label>
+                           <RadioGroup
+                                   name="materialType"
+                                   options={[
+                                     { value: "TapiocaRoot", label: "Tapioca Root" },
+                                     { value: "Others", label: "Others" },
+                                   ]}
+                                   defaultValue={localFilters.materialType || "TapiocaRoot"}
+                                   
+                                 />
+                         </div>
+               </div>
+
+          <div className="p-2 border-t border-[#dee2e6] flex justify-end gap-2">
+            <button className="btn-sm btn-light" onClick={handleClearFilters}>
+              Reset All
+            </button>
+            <button className="btn-sm btn-primary" onClick={handleApplyFilters}>
+              Apply
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
 };
 
-export default WaymentSummary; 
+export default WaymentSummary;
