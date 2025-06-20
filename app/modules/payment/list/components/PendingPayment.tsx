@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiCall } from "../../../../utils/api";
 import DatePicker from "@/app/utils/datepicker";
+import { paymentmockData } from "@/app/JSON";
 
 interface PendingPattiyal {
   id: number;
@@ -36,82 +37,9 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
       setLoading(true);
       setError(null);
       
-      const mockData = [
-        {
-          id: 1,
-          traderName: "John Doe",
-          date:"12/05/2025",
-          amount: "15000.00",
-          bankName: "State Bank of India",
-          accountNumber: "XXXXXXXXXXXX1234",
-          ifscCode: "SBIN0000001",
-        },
-        {
-          id: 2,
-          traderName: "John Doe",
-          date:"12/05/2025",
-          amount: "22500.50",
-          bankName: "HDFC Bank",
-          accountNumber: "XXXXXXXXXXXX5678",
-          ifscCode: "HDFC0000002",
-        },
-        {
-          id: 3,
-          traderName: "John Doe",
-          date:"12/05/2025",
-          amount: "10000.00",
-          bankName: "ICICI Bank",
-          accountNumber: "XXXXXXXXXXXX9101",
-          ifscCode: "ICIC0000003",
-        },
-        {
-          id: 4,
-          traderName: "John Doe",
-          date:"12/05/2025",
-          amount: "30000.75",
-          bankName: "Axis Bank",
-          accountNumber: "XXXXXXXXXXXX1122",
-          ifscCode: "UTIB0000004",
-        },
-        {
-          id: 5,
-          traderName: "John Doe",
-          date:"12/05/2025",
-          amount: "5000.00",
-          bankName: "Canara Bank",
-          accountNumber: "XXXXXXXXXXXX3344",
-          ifscCode: "CNRB0000005",
-        },
-        {
-          id: 6,
-          traderName: "John Doe",
-          date:"25//10/2024",
-          amount: "15000.00",
-          bankName: "State Bank of India",
-          accountNumber: "XXXXXXXXXXXX1234",
-          ifscCode: "SBIN0000001",
-        },
-        {
-          id: 7,
-          traderName: "John Doe",
-          date:"25//10/2024",
-          amount: "22500.50",
-          bankName: "HDFC Bank",
-          accountNumber: "XXXXXXXXXXXX5678",
-          ifscCode: "HDFC0000002",
-        },
-        {
-          id: 8,
-          traderName: "John Doe",
-          date:"25//10/2024",
-          amount: "10000.00",
-          bankName: "ICICI Bank",
-          accountNumber: "XXXXXXXXXXXX9101",
-          ifscCode: "ICIC0000003",
-        },
-      ];
+     
       await new Promise(resolve => setTimeout(resolve, 500));
-      setPendingPattiyals(mockData);
+      setPendingPattiyals(paymentmockData);
     } catch (err) {
       console.error("Error fetching pending pattiyals:", err);
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch pending pattiyals";

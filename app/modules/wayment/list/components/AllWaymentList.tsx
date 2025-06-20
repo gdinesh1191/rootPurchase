@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import DatePicker from "@/app/utils/datepicker";
 import { RadioGroup } from "@/app/utils/form-controls";
+import useInputValidation from "@/app/utils/inputValidations";
+import { waymentMockData } from "@/app/JSON";
 
 interface Wayment {
   id: number;
@@ -13,12 +15,19 @@ interface Wayment {
   variety: string;
   netWeight: string;
   place: string;
+  driverName: string;
+  material: string;
+  noOfPartLoads: string;
+  firstWeight: string;
+  secondWeight: string;
+  billWeight: string;
+  soilLossPercentage: string;
+  remarks: string;
 }
 
 interface WaymentTableProps {
   onSidebarToggle: () => void;
 }
-
 
 const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
   const [wayment, setWayment] = useState<Wayment[]>([]);
@@ -26,174 +35,25 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
   const [selectAll, setSelectAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [materialType, setMaterialType] = useState<string>("TapiocaRoot");
+  const [EditData, setEditData] = useState<any>(null);
   // Filter states
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<any>({});
   const [localFilters, setLocalFilters] = useState<any>({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useInputValidation();
   const fetchWayment = async () => {
     try {
       setLoading(true);
       setError(null);
 
       // Mock data for wayment
-      const mockData = [
-        {
-          id: 1,
-          customerName: "Kumar Traders",
-          waymentNo: "SAGO001",
-          vehicleNo: "TN38AA1234",
-          materialType: "Tapioca",
-          variety: "நீலம்",
-          netWeight: "2500 kg",
-          place: "Salem",
-        },
-        {
-          id: 2,
-          customerName: "Selvam Agencies",
-          waymentNo: "SAGO002",
-          vehicleNo: "TN28BB5678",
-          materialType: "Tapioca",
-          variety: "குண்டு",
-          netWeight: "2300 kg",
-          place: "Namakkal",
-        },
-        {
-          id: 3,
-          customerName: "Rani Traders",
-          waymentNo: "SAGO003",
-          vehicleNo: "TN30CC3456",
-          materialType: "Other",
-          variety: "நீலம்",
-          netWeight: "1800 kg",
-          place: "Rasipuram",
-        },
-        {
-          id: 4,
-          customerName: "Sabari Mill",
-          waymentNo: "SAGO004",
-          vehicleNo: "TN32DD9012",
-          materialType: "Tapioca",
-          variety: "குண்டு",
-          netWeight: "2000 kg",
-          place: "Attur",
-        },
-        {
-          id: 5,
-          customerName: "Sri Sago Co.",
-          waymentNo: "SAGO005",
-          vehicleNo: "TN12EE8888",
-          materialType: "Other",
-          variety: "குண்டு",
-          netWeight: "1900 kg",
-          place: "Tiruchengode",
-        },
-        {
-          id: 6,
-          customerName: "Vel Traders",
-          waymentNo: "SAGO006",
-          vehicleNo: "TN29FF1122",
-          materialType: "Tapioca",
-          variety: "நீலம்",
-          netWeight: "2600 kg",
-          place: "Edappadi",
-        },
-        {
-          id: 7,
-          customerName: "Shree Mill",
-          waymentNo: "SAGO007",
-          vehicleNo: "TN25GG3344",
-          materialType: "Tapioca",
-          variety: "குண்டு",
-          netWeight: "2200 kg",
-          place: "Mallasamudram",
-        },
-        {
-          id: 8,
-          customerName: "Sundar & Sons",
-          waymentNo: "SAGO008",
-          vehicleNo: "TN58HH5566",
-          materialType: "Other",
-          variety: "நீலம்",
-          netWeight: "2100 kg",
-          place: "Komarapalayam",
-        },
-        {
-          id: 9,
-          customerName: "Sago Gold Traders",
-          waymentNo: "SAGO009",
-          vehicleNo: "TN20JJ7788",
-          materialType: "Tapioca",
-          variety: "நீலம்",
-          netWeight: "2400 kg",
-          place: "Tharamangalam",
-        },
-        {
-          id: 10,
-          customerName: "Anbu Sago",
-          waymentNo: "SAGO010",
-          vehicleNo: "TN45KK9900",
-          materialType: "Other",
-          variety: "குண்டு",
-          netWeight: "1700 kg",
-          place: "Paramathi Velur",
-        },
-        {
-          id: 11,
-          customerName: "Gopi Traders",
-          waymentNo: "SAGO011",
-          vehicleNo: "TN14LL1234",
-          materialType: "Tapioca",
-          variety: "நீலம்",
-          netWeight: "2500 kg",
-          place: "Puduchatram",
-        },
-        {
-          id: 12,
-          customerName: "Senthil Mill",
-          waymentNo: "SAGO012",
-          vehicleNo: "TN11MM5678",
-          materialType: "Other",
-          variety: "நீலம்",
-          netWeight: "1850 kg",
-          place: "Konganapuram",
-        },
-        {
-          id: 13,
-          customerName: "Lakshmi Traders",
-          waymentNo: "SAGO013",
-          vehicleNo: "TN27NN3456",
-          materialType: "Tapioca",
-          variety: "குண்டு",
-          netWeight: "2750 kg",
-          place: "Vennandur",
-        },
-        {
-          id: 14,
-          customerName: "Maruthi Co.",
-          waymentNo: "SAGO014",
-          vehicleNo: "TN23OO9012",
-          materialType: "Other",
-          variety: "குண்டு",
-          netWeight: "1950 kg",
-          place: "Veerapandi",
-        },
-        {
-          id: 15,
-          customerName: "Bala Traders",
-          waymentNo: "SAGO015",
-          vehicleNo: "TN19PP8888",
-          materialType: "Tapioca",
-          variety: "நீலம்",
-          netWeight: "2600 kg",
-          place: "Sendamangalam",
-        },
-      ];
+    
 
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
-      setWayment(mockData);
+      setWayment(waymentMockData);
     } catch (err) {
       console.error("Error fetching wayment:", err);
       setError("Failed to fetch wayment");
@@ -251,6 +111,14 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
   useEffect(() => {
     setSelectAll(wayment.length > 0 && selectedIds.length === wayment.length);
   }, [selectedIds, wayment]);
+
+  const handleEdit = (item: any) => {
+    console.log("Editing item:", item);
+    setEditData(item);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => setIsModalOpen(false);
 
   if (loading) {
     return (
@@ -462,7 +330,10 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                     </td>
                     <td className="td-cell">
                       <span className="float-left">{index + 1}</span>
-                      <span className="float-right">
+                      <span
+                        className="float-right"
+                        onClick={() => handleEdit(payment)}
+                      >
                         <i className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100"></i>
                       </span>
                     </td>
@@ -488,6 +359,237 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
           <span className="text-blue-600">{wayment.length}</span>
         </span>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-[0.5rem] w-full max-w-[60%] min-h-[calc(100vh-250px)] flex flex-col custom-helvetica">
+            {/* Modal Header */}
+            <div className="relative border-b border-[#dee2e6] px-4 py-2 bg-[#f8f8f8] rounded-tl-md">
+              <span className="text-[16px] text-[#212529]">Edit</span>
+              <button
+                onClick={closeModal}
+                className="absolute -top-[10px] -right-[10px] text-gray-500 hover:text-gray-700 bg-[#909090] hover:bg-[#cc0000] rounded-full w-[30px] h-[30px] border-2 border-white cursor-pointer"
+              >
+                <i className="ri-close-line text-white"></i>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="row p-[16px] m-0 flex-1 flex flex-col overflow-auto max-h-[calc(100vh-350px)]">
+              <div className="grid grid-cols-12 flex-1 ">
+                <div className="col-span-12 overflow-y-auto pr-2 ">
+                  <div className="space-y-6">
+                    {/* Summary Card – Redesigned */}
+                    {/* Summary Card */}
+                    <div className=" p-4 bg-white rounded-xl border border-gray-200 shadow-md">
+                      <div className="text-sm font-semibold text-gray-800 mb-3 border-b pb-2">
+                        Summary Info
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-700">
+                        {/* Vehicle No - Text Highlighted */}
+                        <div>
+                          <label className="form-label">Vehicle No</label>
+                          <p className="text-[15px] font-bold text-green-700">
+                            {EditData?.vehicleNo || "-"}
+                          </p>
+                        </div>
+
+                        {/* Material Type - Text Highlighted */}
+                        <div>
+                          <label className="form-label">Material Type</label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-700 font-bold text-[15px]">
+                              {EditData?.materialType || "-"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Highlighted Weights - Individually Colored */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                        {/* First Weight */}
+                        <div className="p-3 rounded-lg bg-blue-50 border-l-4 border-blue-600 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            First Weight
+                          </div>
+                          <div className="text-lg font-extrabold text-blue-800 leading-tight">
+                           {EditData?.firstWeight || "-"}
+                          </div>
+                        </div>
+
+                        {/* Second Weight */}
+                        <div className="p-3 rounded-lg bg-purple-50 border-l-4 border-purple-600 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            Second Weight
+                          </div>
+                          <div className="text-lg font-extrabold text-purple-800 leading-tight">
+                            {EditData?.secondWeight || "-"  }
+                          </div>
+                        </div>
+
+                        {/* Net Weight */}
+                        <div className="p-3 rounded-lg bg-yellow-50 border-l-4 border-yellow-500 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            Net Weight (Kgs)
+                          </div>
+                          <div className="text-lg font-extrabold text-yellow-700 leading-tight">
+                            {EditData?.netWeight || "-"}
+                          </div>
+                        </div>
+
+                        {/* Bill Weight */}
+                        <div className="p-3 rounded-lg bg-teal-50 border-l-4 border-teal-600 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            Bill Weight (Kgs)
+                          </div>
+                          <div className="text-lg font-extrabold text-teal-800 leading-tight">
+                            {EditData?.billWeight || "-"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-300 my-6"></div>
+
+                    {/* Editable Fields */}
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="form-label">Customer Name</label>
+                        <input
+                          type="text"
+                          value={EditData?.customerName || ""}
+                          placeholder="Enter Customer Name"
+                          className="form-control capitalize"
+                          onChange={(e) =>
+                            setEditData({
+                              ...EditData,
+                              customerName: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="form-label">Driver Name</label>
+                        <input
+                          type="text"
+                          value={EditData?.driverName || ""}
+                          placeholder="Enter Driver Name"
+                          className="form-control capitalize"
+                          onChange={(e) =>
+                            setEditData({
+                              ...EditData,
+                              driverName: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="form-label">Soil Loss (%)</label>
+                        <input
+                          type="text"
+                          value={EditData?.soilLossPercentage || ""}
+                          placeholder="e.g. 5"
+                          className="form-control only_number"
+                          onChange={(e) =>
+                            setEditData({
+                              ...EditData,
+                              soilLossPercentage: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="form-label">No. of Part Loads</label>
+                        <input
+                          type="text"
+                          value={EditData?.noOfPartLoads || ""}
+                          placeholder="0"
+                          className="form-control only_number"
+                          onChange={(e) =>
+                            setEditData({
+                              ...EditData,
+                              noOfPartLoads: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="form-label">Material</label>
+                        <input
+                          type="text"
+                          value={EditData?.material || ""}
+                          placeholder="Enter Material"
+                          className="form-control capitalize"
+                          onChange={(e) =>
+                            setEditData({...EditData, material: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="form-label">Variety</label>
+                        <input
+                          type="text"
+                          value={EditData?.variety || ""}
+                          placeholder="Enter Variety"
+                          className="form-control capitalize"
+                          onChange={(e) =>
+                            setEditData({...EditData, variety: e.target.value })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="form-label">Place</label>
+                        <input
+                          type="text"
+                          value={EditData?.place || ""}
+                          placeholder="Enter Place"
+                          className="form-control capitalize"
+                          onChange={(e) =>
+                            setEditData({...EditData, place: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="form-label">Remarks</label>
+                        <textarea
+                          placeholder="Enter Remarks"
+                          value={EditData?.remarks || ""}
+                          onChange={(e) =>
+                            setEditData({
+                              ...EditData,
+                              remarks: e.target.value,
+                            })
+                          }
+                          rows={3}
+                          className="form-control h-[40px] capitalize "
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Fixed Footer Buttons */}
+            <div className="sticky bottom-0 bg-[#ebeff3] h-[60px] py-3 px-4 flex justify-end space-x-4 z-10">
+              <button className="btn-sm btn-primary">Save</button>
+              <button onClick={closeModal} className="btn-sm btn-secondary">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filter Modal */}
       <div
@@ -542,16 +644,16 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
             <div className="mb-4">
               <label className="filter-label">Material Type</label>
               <RadioGroup
-                      name="materialType"
-                      options={[
-                        { value: "TapiocaRoot", label: "Tapioca Root" },
-                        { value: "Others", label: "Others" },
-                      ]}
-                      defaultValue={localFilters.materialType || "TapiocaRoot"}
-                      onChange={(e) => {
-                        handleFilterInputChange("materialType", e.target.value);
-                      }}
-                    />
+                name="materialType"
+                options={[
+                  { value: "TapiocaRoot", label: "Tapioca Root" },
+                  { value: "Others", label: "Others" },
+                ]}
+                defaultValue={localFilters.materialType || "TapiocaRoot"}
+                onChange={(e) => {
+                  handleFilterInputChange("materialType", e.target.value);
+                }}
+              />
             </div>
           </div>
           <div className="p-2 border-t border-[#dee2e6] flex justify-end gap-2">

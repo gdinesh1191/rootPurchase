@@ -4,6 +4,7 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import Layout from "../../../components/Layout";
 import useInputValidation from "@/app/utils/inputValidations";
 import DatePicker from "@/app/utils/datepicker";
+import { paymentCustomerDetails, paymentTransactionData } from "@/app/JSON";
 
 // Type definitions
 interface BankDetails {
@@ -70,187 +71,7 @@ export default function NewPayment() {
   const [activeTab, setActiveTab] = useState("details");
 const [date, setDate] = useState<Date | undefined>(undefined);
 
-  const customerDetails = [
-    { label: "Customer Name", value: "John Cena", class: "text-gray-800" },
-    { label: "Outstanding Balance", value: "500.00", class: "text-red-500" },
-    {
-      label: "Last Payment Date",
-      value: "December 15, 2024",
-      class: "text-gray-800",
-    },
-    { label: "Total Payments Made", value: "2,500.00", class: "text-teal-500" },
-    {
-      label: "Next Due Date",
-      value: "January 15, 2025",
-      class: "text-gray-800",
-    },
-    { label: "Account Status", value: "Active", class: "text-green-500" },
-    {
-      label: "Next Due Date",
-      value: "January 15, 2025",
-      class: "text-gray-800",
-    },
-    { label: "Account Status", value: "Active", class: "text-green-500" },
-    {
-      label: "Next Due Date",
-      value: "January 15, 2025",
-      class: "text-gray-800",
-    },
-    { label: "Account Status", value: "Active", class: "text-green-500" },
-    {
-      label: "Next Due Date",
-      value: "January 15, 2025",
-      class: "text-gray-800",
-    },
-    { label: "Account Status", value: "Active", class: "text-green-500" },
-    {
-      label: "Next Due Date",
-      value: "January 15, 2025",
-      class: "text-gray-800",
-    },
-    { label: "Account Status", value: "Active", class: "text-green-500" },
-    {
-      label: "Next Due Date",
-      value: "January 15, 2025",
-      class: "text-gray-800",
-    },
-    { label: "Account Status", value: "Active", class: "text-green-500" },
-    {
-      label: "Next Due Date",
-      value: "January 15, 2025",
-      class: "text-gray-800",
-    },
-    { label: "Account Status", value: "Active", class: "text-green-500" },
-    {
-      label: "Next Due Date",
-      value: "January 15, 2025",
-      class: "text-gray-800",
-    },
-    { label: "Account Status", value: "Active", class: "text-green-500" },
-  ];
-
-  const transactionData = [
-    {
-      date: "2024-12-15",
-      invoice: "INV-001",
-      amount: "150.00",
-      balance: "500.00",
-    },
-    {
-      date: "2024-11-15",
-      invoice: "INV-002",
-      amount: "200.00",
-      balance: "650.00",
-    },
-    {
-      date: "2024-10-15",
-      invoice: "INV-003",
-      amount: "175.00",
-      balance: "850.00",
-    },
-    {
-      date: "2024-09-15",
-      invoice: "INV-004",
-      amount: "225.00",
-      balance: "1025.00",
-    },
-    {
-      date: "2024-12-15",
-      invoice: "INV-001",
-      amount: "150.00",
-      balance: "500.00",
-    },
-    {
-      date: "2024-11-15",
-      invoice: "INV-002",
-      amount: "200.00",
-      balance: "650.00",
-    },
-    {
-      date: "2024-10-15",
-      invoice: "INV-003",
-      amount: "175.00",
-      balance: "850.00",
-    },
-    {
-      date: "2024-09-15",
-      invoice: "INV-004",
-      amount: "225.00",
-      balance: "1025.00",
-    },
-    {
-      date: "2024-12-15",
-      invoice: "INV-001",
-      amount: "150.00",
-      balance: "500.00",
-    },
-    {
-      date: "2024-11-15",
-      invoice: "INV-002",
-      amount: "200.00",
-      balance: "650.00",
-    },
-    {
-      date: "2024-10-15",
-      invoice: "INV-003",
-      amount: "175.00",
-      balance: "850.00",
-    },
-    {
-      date: "2024-09-15",
-      invoice: "INV-004",
-      amount: "225.00",
-      balance: "1025.00",
-    },
-    {
-      date: "2024-12-15",
-      invoice: "INV-001",
-      amount: "150.00",
-      balance: "500.00",
-    },
-    {
-      date: "2024-11-15",
-      invoice: "INV-002",
-      amount: "200.00",
-      balance: "650.00",
-    },
-    {
-      date: "2024-10-15",
-      invoice: "INV-003",
-      amount: "175.00",
-      balance: "850.00",
-    },
-    {
-      date: "2024-09-15",
-      invoice: "INV-004",
-      amount: "225.00",
-      balance: "1025.00",
-    },
-    {
-      date: "2024-12-15",
-      invoice: "INV-001",
-      amount: "150.00",
-      balance: "500.00",
-    },
-    {
-      date: "2024-11-15",
-      invoice: "INV-002",
-      amount: "200.00",
-      balance: "650.00",
-    },
-    {
-      date: "2024-10-15",
-      invoice: "INV-003",
-      amount: "175.00",
-      balance: "850.00",
-    },
-    {
-      date: "2024-09-15",
-      invoice: "INV-004",
-      amount: "225.00",
-      balance: "1025.00",
-    },
-  ];
+ 
   useInputValidation();
   const handleBankChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -408,7 +229,7 @@ const [date, setDate] = useState<Date | undefined>(undefined);
                       {activeTab === "details" && (
                         <div className="tab-pane fade show active h-[475px]">
                           <div className="customer-details overflow-auto h-full">
-                            {customerDetails.map((detail, index) => (
+                            {paymentCustomerDetails.map((detail, index) => (
                               <div
                                 key={index}
                                 className="detail-row flex items-center text-sm py-2 border-b border-gray-100"
@@ -452,7 +273,7 @@ const [date, setDate] = useState<Date | undefined>(undefined);
                                 </tr>
                               </thead>
                               <tbody>
-                                {transactionData.map((transaction, index) => (
+                                {paymentTransactionData.map((transaction, index) => (
                                   <tr key={index} className="tr-hover group">
                                     <td className="td-cell border border-gray-200 px-2 py-1.5 text-sm text-gray-800">
                                       {transaction.date}
