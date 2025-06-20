@@ -346,35 +346,30 @@ const PattiyalTraders: React.FC<PattiyalTradersProps> = ({ activeReport, activeC
               </thead>
               <tbody>
                 {Pattiyal.map((payment, index) => (
-                  <tr
-                  key={payment.id}
-                  className={`group hover:bg-[#f5f7f9] text-sm cursor-pointer ${
-                    selectedIds.includes(payment.id)
-                      ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]": "" }`}>
-                  <td className="td-cell">
-                    <input
-                      type="checkbox"
-                      className="form-check"
-                      checked={selectedIds.includes(payment.id)}
-                      onChange={() => handleCheckboxChange(payment.id)}/>
-                  </td>
-                
-                    <td className="td-cell">
-                      <span className="float-left">{index + 1}</span>
-                      <span className="float-right cursor-pointer">
-                        <i className="p-1 rounded border border-[#cfd7df] text-[#4d5e6c] ri-pencil-fill opacity-0 group-hover:opacity-100"></i>
-                      </span>
-                    </td>
-                    <td className="td-cell">{payment.date}</td>
-                    <td className="td-cell">{payment.weightNo}</td>
-                    <td className="td-cell">{payment.pattiyalNo}</td> {/* Corrected casing */}
-                    <td className="td-cell">{payment.vehicleNo}</td>
-                    <td className="td-cell">{payment.partLoad}</td>
-                    <td className="td-cell">{payment.completedDate}</td>
-                    <td className="td-cell">{payment.totalAmount}</td>
-                    <td className="td-cell">{payment.paymentStatus}</td>
-                    <td className="last-td-cell">{payment.deliveryStatus}</td> {/* Added Delivery Status cell */}
-                  </tr>
+              <tr
+              key={payment.id}
+              className={`group hover:bg-[#f5f7f9] text-sm cursor-pointer ${
+                selectedIds.includes(payment.id)
+                  ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]"
+                  : ""
+              }`}
+            >
+              <td className="td-cell">
+                <input
+                  type="checkbox"
+                  className="form-check"
+                  checked={selectedIds.includes(payment.id)}
+                  onChange={() => handleCheckboxChange(payment.id)}
+                />
+              </td><td className="td-cell">
+                <span className="float-left">{index + 1}</span>
+                <span className="float-right cursor-pointer">
+                  <i className="p-1 rounded border border-[#cfd7df] text-[#4d5e6c] ri-pencil-fill opacity-0 group-hover:opacity-100"></i>
+                </span>
+              </td><td className="td-cell">{payment.date}</td><td className="td-cell">{payment.weightNo}</td><td className="td-cell">{payment.pattiyalNo}</td><td className="td-cell">{payment.vehicleNo}</td><td className="td-cell">{payment.partLoad}</td><td className="td-cell">{payment.completedDate}</td><td className="td-cell">{payment.totalAmount}</td><td className="td-cell">{payment.paymentStatus}</td><td className="last-td-cell">{payment.deliveryStatus}</td>
+           
+            
+            </tr>
                 ))}
               </tbody>
             </table>
