@@ -582,7 +582,7 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
             </div>
 
             {/* Fixed Footer Buttons */}
-            <div className="sticky bottom-0 bg-[#ebeff3] h-[60px] py-3 px-4 flex justify-end space-x-4 z-10">
+            <div className="sticky bottom-0 bg-[#ebeff3] h-[60px] py-3 px-4 flex justify-end space-x-4 z-10 rounded-b-lg">
               <button className="btn-sm btn-primary" onClick={SaveEdit}>Save</button>
               <button onClick={closeModal} className="btn-sm btn-secondary">
                 Cancel
