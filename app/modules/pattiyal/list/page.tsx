@@ -41,9 +41,9 @@ const PattiyalList = () => {
   };
 
   return (
-    <Layout pageTitle="Pattiyal Management">
+    <Layout pageTitle="Pattiyal Management"> 
       <main className="flex-1">
-        <div className="overflow-y-hidden h-[calc(100vh-103px)]">
+        <div className="overflow-y-hidden h-[calc(100vh-43px)]">
           <div className="flex justify-between items-center bg-white px-1.5 mt-[5px] ml-2 whitespace-nowrap">
             <ul className="flex flex-nowrap text-sm font-medium text-center">
               {tabs.map((tab) => (
