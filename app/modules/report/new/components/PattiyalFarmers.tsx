@@ -3,16 +3,18 @@
 
 import { RadioGroup } from '@/app/utils/form-controls';
 import { useEffect, useState } from 'react';
+import {   mockPattiyalData } from "@/app/data/JSON";
+
 // Assuming DatePicker and RadioGroup are available at these paths
 // import DatePicker from '@/app/utils/datepicker';
 // import { RadioGroup } from '@/app/utils/form-controls';
 
 // Define the Pattiyal interface based on the provided mock data
-interface Pattiyal {
+export interface Pattiyal { // Export the interface if it's used in mockData.ts
   id: number;
   date: string;
   weightNo: string;
-  pattiyalNo: string; // Corrected to match mock data casing
+  pattiyalNo: string;
   vehicleNo: string;
   partLoad: string;
   inTime: string;
@@ -21,14 +23,11 @@ interface Pattiyal {
   totalAmount: string;
   paymentStatus: string;
   deliveryStatus: string;
-  // Added properties that were previously in the interface but not in mock data,
-  // if you intend to use them, you'll need to add them to your mock data or API response.
-  // For now, I'm removing them as they don't exist in the current mock.
-  customerName?: string; // Optional, as it's not in the mock data but was in the original interface
-  materialType?: string; // Optional
-  variety?: string; // Optional
-  netWeight?: string; // Optional
-  place?: string; // Optional
+  customerName?: string;
+  materialType?: string;
+  variety?: string;
+  netWeight?: string;
+  place?: string;
 }
 
 interface PattiyalFarmersProps {
@@ -53,27 +52,8 @@ const PattiyalFarmers: React.FC<PattiyalFarmersProps> = ({ activeReport, activeC
       setLoading(true);
       setError(null);
 
-      // Mock data for Pattiyal as provided in AllPattiyalList
-      const mockData = [
-        { id: 1, date: "2024-01-10", weightNo: "WT101", pattiyalNo: "PT101", vehicleNo: "TN29N1212", partLoad: "Full Load", inTime: "08:30 AM", outTime: "06:45 PM", completedDate: "2024-01-12", totalAmount: "₹25,000", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer A", materialType: "TapiocaRoot", variety: "V1", netWeight: "1000kg", place: "Salem" },
-        { id: 2, date: "2024-01-11", weightNo: "WT102", pattiyalNo: "PT102", vehicleNo: "TN45Z2321", partLoad: "Partial Load", inTime: "09:15 AM", outTime: "07:30 PM", completedDate: "2024-01-13", totalAmount: "₹18,500", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer B", materialType: "Others", variety: "V2", netWeight: "750kg", place: "Namakkal" },
-        { id: 3, date: "2024-01-12", weightNo: "WT103", pattiyalNo: "PT103", vehicleNo: "TN37A5678", partLoad: "Full Load", inTime: "07:45 AM", outTime: "08:15 PM", completedDate: "2024-01-14", totalAmount: "₹32,000", paymentStatus: "Pending", deliveryStatus: "Delivered", customerName: "Customer A", materialType: "TapiocaRoot", variety: "V1", netWeight: "1200kg", place: "Erode" },
-        { id: 4, date: "2024-01-13", weightNo: "WT104", pattiyalNo: "PT104", vehicleNo: "TN10B1234", partLoad: "Partial Load", inTime: "10:00 AM", outTime: "05:30 PM", completedDate: "2024-01-15", totalAmount: "₹22,750", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer C", materialType: "Others", variety: "V3", netWeight: "900kg", place: "Karur" },
-        { id: 5, date: "2024-01-14", weightNo: "WT105", pattiyalNo: "PT105", vehicleNo: "TN11C5678", partLoad: "Full Load", inTime: "07:15 AM", outTime: "09:00 PM", completedDate: "2024-01-16", totalAmount: "₹28,900", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer B", materialType: "TapiocaRoot", variety: "V2", netWeight: "1100kg", place: "Tiruchengode" },
-        { id: 6, date: "2024-01-15", weightNo: "WT106", pattiyalNo: "PT106", vehicleNo: "TN22D9876", partLoad: "Partial Load", inTime: "08:00 AM", outTime: "07:00 PM", completedDate: "2024-01-17", totalAmount: "₹20,000", paymentStatus: "Pending", deliveryStatus: "Delivered", customerName: "Customer D", materialType: "Others", variety: "V4", netWeight: "800kg", place: "Coimbatore" },
-        { id: 7, date: "2024-01-16", weightNo: "WT107", pattiyalNo: "PT107", vehicleNo: "TN33F4321", partLoad: "Full Load", inTime: "06:45 AM", outTime: "08:30 PM", completedDate: "2024-01-18", totalAmount: "₹30,500", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer E", materialType: "TapiocaRoot", variety: "V3", netWeight: "1150kg", place: "Dindigul" },
-        { id: 8, date: "2024-01-17", weightNo: "WT108", pattiyalNo: "PT108", vehicleNo: "TN48G8765", partLoad: "Partial Load", inTime: "09:30 AM", outTime: "06:00 PM", completedDate: "2024-01-19", totalAmount: "₹19,800", paymentStatus: "Unpaid", deliveryStatus: "Pending", customerName: "Customer F", materialType: "Others", variety: "V5", netWeight: "700", place: "Dindigul" },
-        { id: 9, date: "2024-01-13", weightNo: "WT104", pattiyalNo: "PT104", vehicleNo: "TN10B1234", partLoad: "Partial Load", inTime: "10:00 AM", outTime: "05:30 PM", completedDate: "2024-01-15", totalAmount: "₹22,750", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer C", materialType: "Others", variety: "V3", netWeight: "900kg", place: "Karur" },
-        { id: 10, date: "2024-01-14", weightNo: "WT105", pattiyalNo: "PT105", vehicleNo: "TN11C5678", partLoad: "Full Load", inTime: "07:15 AM", outTime: "09:00 PM", completedDate: "2024-01-16", totalAmount: "₹28,900", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer B", materialType: "TapiocaRoot", variety: "V2", netWeight: "1100kg", place: "Tiruchengode" },
-        { id: 11, date: "2024-01-15", weightNo: "WT106", pattiyalNo: "PT106", vehicleNo: "TN22D9876", partLoad: "Partial Load", inTime: "08:00 AM", outTime: "07:00 PM", completedDate: "2024-01-17", totalAmount: "₹20,000", paymentStatus: "Pending", deliveryStatus: "Delivered", customerName: "Customer D", materialType: "Others", variety: "V4", netWeight: "800kg", place: "Coimbatore" },
-        { id: 12, date: "2024-01-16", weightNo: "WT107", pattiyalNo: "PT107", vehicleNo: "TN33F4321", partLoad: "Full Load", inTime: "06:45 AM", outTime: "08:30 PM", completedDate: "2024-01-18", totalAmount: "₹30,500", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer E", materialType: "TapiocaRoot", variety: "V3", netWeight: "1150kg", place: "Dindigul" },
-        { id: 13, date: "2024-01-17", weightNo: "WT108", pattiyalNo: "PT108", vehicleNo: "TN48G8765", partLoad: "Partial Load", inTime: "09:30 AM", outTime: "06:00 PM", completedDate: "2024-01-19", totalAmount: "₹19,800", paymentStatus: "Unpaid", deliveryStatus: "Pending", customerName: "Customer F", materialType: "Others", variety: "V5", netWeight: "700", place: "Dindigul" },
-    ];      
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Apply filters to mockData
-      let filteredData = mockData.filter(item => {
+      // Use the imported mock data
+      let filteredData = mockPattiyalData.filter(item => {
         let match = true;
         if (filters.customerName && !item.customerName?.toLowerCase().includes(filters.customerName.toLowerCase())) {
           match = false;
@@ -90,6 +70,9 @@ const PattiyalFarmers: React.FC<PattiyalFarmersProps> = ({ activeReport, activeC
         // Add more filter conditions as needed based on your mock data fields
         return match;
       });
+
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       setPattiyal(filteredData);
     } catch (err) {
@@ -391,13 +374,13 @@ const PattiyalFarmers: React.FC<PattiyalFarmersProps> = ({ activeReport, activeC
                     </td>
                     <td className="td-cell">{payment.date}</td>
                     <td className="td-cell">{payment.weightNo}</td>
-                    <td className="td-cell">{payment.pattiyalNo}</td> {/* Corrected casing */}
+                    <td className="td-cell">{payment.pattiyalNo}</td>
                     <td className="td-cell">{payment.vehicleNo}</td>
                     <td className="td-cell">{payment.partLoad}</td>
                     <td className="td-cell">{payment.completedDate}</td>
                     <td className="td-cell">{payment.totalAmount}</td>
                     <td className="td-cell">{payment.paymentStatus}</td>
-                    <td className="last-td-cell">{payment.deliveryStatus}</td> {/* Added Delivery Status cell */}
+                    <td className="last-td-cell">{payment.deliveryStatus}</td>
                   </tr>
                 ))}
               </tbody>
@@ -444,34 +427,59 @@ const PattiyalFarmers: React.FC<PattiyalFarmersProps> = ({ activeReport, activeC
           <div className="p-4 overflow-y-auto flex-1">
             <div className="mb-4">
               <label className="filter-label">Company Name</label>
-              <input 
-                type="text" 
-                placeholder="Enter company name" 
+              <input
+                type="text"
+                placeholder="Enter company name"
                 className="form-control"
-                
-                 
+                value={localFilters.customerName || ''}
+                onChange={(e) => handleLocalFilterChange('customerName', e.target.value)}
               />
             </div>
             <div className="mb-4">
               <label className="filter-label">Location</label>
-              <input 
-                type="text" 
-                placeholder="Enter location" 
+              <input
+                type="text"
+                placeholder="Enter location"
                 className="form-control"
-                 
-                
+                value={localFilters.place || ''}
+                onChange={(e) => handleLocalFilterChange('place', e.target.value)}
               />
             </div>
             <div className="mb-4">
-              <label className="filter-label">Status</label>
-              <select 
+              <label className="filter-label">Material Type</label>
+              <select
                 className="form-control"
-                 
-                 
+                value={localFilters.materialType || ''}
+                onChange={(e) => handleLocalFilterChange('materialType', e.target.value)}
               >
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
+                <option value="">All Material Types</option>
+                <option value="TapiocaRoot">Tapioca Root</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+             <div className="mb-4">
+              <label className="filter-label">Payment Status</label>
+              <select
+                className="form-control"
+                value={localFilters.paymentStatus || ''}
+                onChange={(e) => handleLocalFilterChange('paymentStatus', e.target.value)}
+              >
+                <option value="">All Payment Statuses</option>
+                <option value="Paid">Paid</option>
+                <option value="Pending">Pending</option>
+                <option value="Unpaid">Unpaid</option>
+              </select>
+            </div>
+             <div className="mb-4">
+              <label className="filter-label">Delivery Status</label>
+              <select
+                className="form-control"
+                value={localFilters.deliveryStatus || ''}
+                onChange={(e) => handleLocalFilterChange('deliveryStatus', e.target.value)}
+              >
+                <option value="">All Delivery Statuses</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Pending">Pending</option>
               </select>
             </div>
           </div>

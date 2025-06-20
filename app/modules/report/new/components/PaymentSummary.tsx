@@ -3,7 +3,8 @@
 import DatePicker from "@/app/utils/datepicker";
 import { RadioGroup } from '@/app/utils/form-controls';
 import { useEffect, useState } from 'react';
- 
+import { mockPaymentData } from "@/app/data/JSON";  
+
 
 // Define the Payment interface with new fields
 interface Payment {
@@ -48,34 +49,12 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({ activeReport, activeCat
     try {
       setLoading(true);
       setError(null);
-
-      // Mock data for Payment with new fields
-      const mockData: Payment[] = [
-        { id: 1, customerName: "Kumar Traders", PaymentNo: "SAGO001", vehicleNo: "TN38AA1234", materialType: "Tapioca", variety: "நீலம்", netWeight: "2500 kg", place: "Salem", pattiyalNo: "PATT001", waymentNo: "WAY001", amount: "₹15000", bankName: "SBI", accountNumber: "1234567890", ifscCode: "SBIN0001234" },
-        { id: 2, customerName: "Selvam Agencies", PaymentNo: "SAGO002", vehicleNo: "TN28BB5678", materialType: "Tapioca", variety: "குண்டு", netWeight: "2300 kg", place: "Namakkal", pattiyalNo: "PATT002", waymentNo: "WAY002", amount: "₹12000", bankName: "ICICI", accountNumber: "0987654321", ifscCode: "ICIC0005678" },
-        { id: 3, customerName: "Rani Traders", PaymentNo: "SAGO003", vehicleNo: "TN30CC3456", materialType: "Other", variety: "நீலம்", netWeight: "1800 kg", place: "Rasipuram", pattiyalNo: "PATT003", waymentNo: "WAY003", amount: "₹9000", bankName: "HDFC", accountNumber: "1122334455", ifscCode: "HDFC0009012" },
-        { id: 4, customerName: "Sabari Mill", PaymentNo: "SAGO004", vehicleNo: "TN32DD9012", materialType: "Tapioca", variety: "குண்டு", netWeight: "2000 kg", place: "Attur", pattiyalNo: "PATT004", waymentNo: "WAY004", amount: "₹10000", bankName: "Axis", accountNumber: "6677889900", ifscCode: "AXIS0003456" },
-        { id: 5, customerName: "Sri Sago Co.", PaymentNo: "SAGO005", vehicleNo: "TN12EE8888", materialType: "Other", variety: "குண்டு", netWeight: "1900 kg", place: "Tiruchengode", pattiyalNo: "PATT005", waymentNo: "WAY005", amount: "₹9500", bankName: "PNB", accountNumber: "2233445566", ifscCode: "PUNB0007890" },
-        { id: 6, customerName: "Vel Traders", PaymentNo: "SAGO006", vehicleNo: "TN29FF1122", materialType: "Tapioca", variety: "நீலம்", netWeight: "2600 kg", place: "Edappadi", pattiyalNo: "PATT006", waymentNo: "WAY006", amount: "₹13000", bankName: "Canara Bank", accountNumber: "3344556677", ifscCode: "CNRB0001011" },
-        { id: 7, customerName: "Shree Mill", PaymentNo: "SAGO007", vehicleNo: "TN25GG3344", materialType: "Tapioca", variety: "குண்டு", netWeight: "2200 kg", place: "Mallasamudram", pattiyalNo: "PATT007", waymentNo: "WAY007", amount: "₹11000", bankName: "Union Bank", accountNumber: "4455667788", ifscCode: "UBIN0002022" },
-        { id: 8, customerName: "Sundar & Sons", PaymentNo: "SAGO008", vehicleNo: "TN58HH5566", materialType: "Other", variety: "நீலம்", netWeight: "2100 kg", place: "Komarapalayam", pattiyalNo: "PATT008", waymentNo: "WAY008", amount: "₹10500", bankName: "Indian Bank", accountNumber: "5566778899", ifscCode: "IDIB0003033" },
-        { id: 9, customerName: "Sago Gold Traders", PaymentNo: "SAGO009", vehicleNo: "TN20JJ7788", materialType: "Tapioca", variety: "நீலம்", netWeight: "2400 kg", place: "Tharamangalam", pattiyalNo: "PATT009", waymentNo: "WAY009", amount: "₹12000", bankName: "IOB", accountNumber: "7788990011", ifscCode: "IOBA0004044" },
-        { id: 10, customerName: "Anbu Sago", PaymentNo: "SAGO010", vehicleNo: "TN45KK9900", materialType: "Other", variety: "குண்டு", netWeight: "1700 kg", place: "Paramathi Velur", pattiyalNo: "PATT010", waymentNo: "WAY010", amount: "₹8500", bankName: "BOB", accountNumber: "8899001122", ifscCode: "BARB0005055" },
-        { id: 11, customerName: "Gopi Traders", PaymentNo: "SAGO011", vehicleNo: "TN14LL1234", materialType: "Tapioca", variety: "நீலம்", netWeight: "2500 kg", place: "Puduchatram", pattiyalNo: "PATT011", waymentNo: "WAY011", amount: "₹12500", bankName: "Karnataka Bank", accountNumber: "9900112233", ifscCode: "KARB0006066" },
-        { id: 12, customerName: "Senthil Mill", PaymentNo: "SAGO012", vehicleNo: "TN11MM5678", materialType: "Other", variety: "நீலம்", netWeight: "1850 kg", place: "Konganapuram", pattiyalNo: "PATT012", waymentNo: "WAY012", amount: "₹9250", bankName: "Dena Bank", accountNumber: "1011223344", ifscCode: "DENA0007077" },
-        { id: 13, customerName: "Lakshmi Traders", PaymentNo: "SAGO013", vehicleNo: "TN27NN3456", materialType: "Tapioca", variety: "குண்டு", netWeight: "2750 kg", place: "Vennandur", pattiyalNo: "PATT013", waymentNo: "WAY013", amount: "₹13750", bankName: "UCO Bank", accountNumber: "1122334455", ifscCode: "UCOB0008088" },
-        { id: 14, customerName: "Maruthi Co.", PaymentNo: "SAGO014", vehicleNo: "TN23OO9012", materialType: "Other", variety: "குண்டு", netWeight: "1950 kg", place: "Veerapandi", pattiyalNo: "PATT014", waymentNo: "WAY014", amount: "₹9750", bankName: "Andhra Bank", accountNumber: "1234567890", ifscCode: "ANDB0009099" },
-        { id: 15, customerName: "Senthil Mill", PaymentNo: "SAGO012", vehicleNo: "TN11MM5678", materialType: "Other", variety: "நீலம்", netWeight: "1850 kg", place: "Konganapuram", pattiyalNo: "PATT015", waymentNo: "WAY015", amount: "₹9250", bankName: "Dena Bank", accountNumber: "1011223344", ifscCode: "DENA0007077" },
-        { id: 16, customerName: "Lakshmi Traders", PaymentNo: "SAGO013", vehicleNo: "TN27NN3456", materialType: "Tapioca", variety: "குண்டு", netWeight: "2750 kg", place: "Vennandur", pattiyalNo: "PATT016", waymentNo: "WAY016", amount: "₹13750", bankName: "UCO Bank", accountNumber: "1122334455", ifscCode: "UCOB0008088" },
-        { id: 17, customerName: "Maruthi Co.", PaymentNo: "SAGO014", vehicleNo: "TN23OO9012", materialType: "Other", variety: "குண்டு", netWeight: "1950 kg", place: "Veerapandi", pattiyalNo: "PATT017", waymentNo: "WAY017", amount: "₹9750", bankName: "Andhra Bank", accountNumber: "1234567890", ifscCode: "ANDB0009099" },
-        { id: 18, customerName: "Bala Traders", PaymentNo: "SAGO015", vehicleNo: "TN19PP8888", materialType: "Tapioca", variety: "நீலம்", netWeight: "2600 kg", place: "Sendamangalam", pattiyalNo: "PATT018", waymentNo: "WAY018", amount: "₹13000", bankName: "Bank of India", accountNumber: "1357924680", ifscCode: "BKID0001234" },
-      ];
-
+ 
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Apply filters to mockData
-      let filteredData = mockData.filter(item => {
+      let filteredData = mockPaymentData.filter(item => {
         let match = true;
         if (filters.customerName && !item.customerName.toLowerCase().includes(filters.customerName.toLowerCase())) {
           match = false;

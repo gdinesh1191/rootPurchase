@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiCall } from "../../../../utils/api";
 import DatePicker from "@/app/utils/datepicker";
-import { paymentmockData } from "@/app/JSON";
+import { paymentmockData } from "@/app/data/JSON";
 
 interface CompletedPattiyal {
   id: number;
