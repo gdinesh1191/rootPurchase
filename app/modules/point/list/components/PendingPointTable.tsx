@@ -1,74 +1,74 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiCall } from "../../../../utils/api";
-import DatePicker from "@/app/utils/datepicker";
-import { paymentmockData } from "@/app/data/JSON";
-
-interface CompletedPattiyal {
+import { dummyPoints } from "@/app/data/JSON";
+interface PendingPoint {
   id: number;
-  traderName: string;
   date: string;
-  amount: string;
-  bankName: string;
-  accountNumber: string;
-  ifscCode: string;
+  waymentNo: string; // Renamed from weightNo
+  PointNo: string;
+  vehicleNo: string;
+  partLoad: string;
+  inTime: string;
+  outTime: string;
+  pointApproval: string;
+  rateApproval: string;
+  PointApproval: string;
+  variety: string; // New column
+  weightAvgPoint: string; // New column
 }
 
-interface CompletedPattiyalTableProps {
+interface PendingPointTableProps {
   onSidebarToggle: () => void;
 }
 
-const CompletedPaymentTable: React.FC<CompletedPattiyalTableProps> = ({ onSidebarToggle }) => {
-  const [completedPattiyals, setCompletedPattiyals] = useState<CompletedPattiyal[]>([]);
+const PendingPointTable: React.FC<PendingPointTableProps> = ({ onSidebarToggle }) => {
+  const [pendingPoints, setPendingPoints] = useState<PendingPoint[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Set to true initially for dummy data
   const [error, setError] = useState<string | null>(null);
-  
+
   // Filter states
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<any>({});
   const [localFilters, setLocalFilters] = useState<any>({});
-const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
-  const [toDate, setToDate] = useState<Date | undefined>(undefined);
-  const fetchCompletedPattiyals = async () => {
+
+ 
+
+  const fetchPendingPoints = async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Mock data for completed pattiyals
-      
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setCompletedPattiyals(paymentmockData);
-      
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setPendingPoints(dummyPoints);
     } catch (err) {
-      console.error("Error fetching completed pattiyals:", err);
-      setError("Failed to fetch completed pattiyals");
-      setCompletedPattiyals([]);
+      console.error("Error fetching pending Points:", err);
+      const errorMessage = err instanceof Error ? err.message : "Failed to fetch pending Points";
+      setError(errorMessage);
+      setPendingPoints([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCompletedPattiyals();
+    fetchPendingPoints();
   }, []);
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setSelectAll(checked);
-    setSelectedIds(checked ? completedPattiyals.map((p) => p.id) : []);
+    setSelectedIds(checked ? pendingPoints.map((p) => p.id) : []);
   };
 
   const handleCheckboxChange = (id: number) => {
-    setSelectedIds((prev) => prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]);
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
   const handleRefresh = () => {
-    fetchCompletedPattiyals();
+    fetchPendingPoints();
   };
 
   // Filter handlers
@@ -97,8 +97,27 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   };
 
   useEffect(() => {
-    setSelectAll(completedPattiyals.length > 0 && selectedIds.length === completedPattiyals.length);
-  }, [selectedIds, completedPattiyals]);
+    setSelectAll(pendingPoints.length > 0 && selectedIds.length === pendingPoints.length);
+  }, [selectedIds, pendingPoints]);
+
+  // Apply filters to the displayed data
+  const filteredPoints = pendingPoints.filter((point) => {
+    if (filters.PointNumber && !point.PointNo.toLowerCase().includes(filters.PointNumber.toLowerCase())) {
+      return false;
+    }
+    if (filters.vehicleNumber && !point.vehicleNo.toLowerCase().includes(filters.vehicleNumber.toLowerCase())) {
+      return false;
+    }
+    if (filters.approvalStatus) {
+      if (filters.approvalStatus === 'approved' && point.PointApproval !== 'Approved') {
+        return false;
+      }
+      if (filters.approvalStatus === 'pending' && point.PointApproval !== 'Pending') {
+        return false;
+      }
+    }
+    return true;
+  });
 
   if (loading) {
     return (
@@ -106,7 +125,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
         <div className="relative">
           <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
         </div>
-        <div className="text-lg font-medium text-gray-700">Loading Completed Payment...</div>
+        <div className="text-lg font-medium text-gray-700">Loading pending Points...</div>
         <div className="text-sm text-gray-500">Please wait while we fetch the data</div>
       </div>
     );
@@ -114,19 +133,38 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64 flex-col">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mx-2 mb-2">
-          <span className="block sm:inline">{error}</span>
-          <button onClick={handleRefresh} className="ml-2 underline hover:no-underline">Retry</button>
+      <div className="flex items-center justify-center h-64 flex-col space-y-4">
+        <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-lg mx-4 max-w-2xl">
+          <div className="flex items-center mb-2">
+            <i className="ri-error-warning-line text-red-600 text-xl mr-2"></i>
+            <h3 className="font-semibold text-lg">Connection Error</h3>
+          </div>
+          <p className="text-sm mb-3">{error}</p>
+          <div className="text-xs text-red-600 mb-3">
+            <strong>Possible solutions:</strong>
+            <ul className="list-disc list-inside mt-1 space-y-1">
+              <li>Check if the API server is running and accessible</li>
+              <li>Verify the API endpoint URL is correct</li>
+              <li>Check for CORS configuration on the server</li>
+              <li>Ensure you have internet connectivity</li>
+            </ul>
+          </div>
+          <button
+            onClick={handleRefresh}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
+          >
+            <i className="ri-refresh-line mr-1"></i>
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
-  if (completedPattiyals.length === 0) {
+  if (filteredPoints.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-500">No completed pattiyals available</div>
+        <div className="text-lg text-gray-500">No pending Points available based on current filters.</div>
       </div>
     );
   }
@@ -150,7 +188,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                 </button>
               </div>
 
-              <button className="btn-sm btn-visible-hover" id="bulkActionsBtn" onClick={() => { setSelectAll(true); setSelectedIds(completedPattiyals.map((p) => p.id)); }}>
+              <button className="btn-sm btn-visible-hover" id="bulkActionsBtn" onClick={() => { setSelectAll(true); setSelectedIds(pendingPoints.map((p) => p.id)); }}>
                 <i className="ri-stack-fill mr-1"></i>
                 Bulk Actions
               </button>
@@ -184,7 +222,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
         </div>
 
         <div className="flex items-center relative space-x-2">
-          <input className="form-control !h-[31px]" type="text" placeholder="Search Trader Name" />
+          <input className="form-control !h-[31px]" type="text" placeholder="Enter Point Number" />
           <button className="btn-sm btn-visible-hover" onClick={handleFilterToggle}>
             <i className="ri-sort-desc"></i>
           </button>
@@ -195,7 +233,7 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
       <div className="bg-[#ebeff3]">
         {selectedIds.length > 1 && (
           <div className="fixed top-42 left-1/2 transform -translate-x-1/2 z-50 badge-selected">
-            {selectedIds.length} Completed Payments selected
+            {selectedIds.length} Points selected
           </div>
         )}
 
@@ -212,65 +250,71 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
                       <span>S.No.</span>
                     </div>
                   </th>
-                   <th className="th-cell">
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Trader Name</span>
-                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
-                    </div>
-                  </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
                       <span>Date</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
-                
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Amount</span>
-                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
-                    </div>
-                  </th>
-                  <th className="th-cell">
-                    <div className="flex justify-between items-center gap-1">
-                      <span>Bank Name</span>
+                      <span>Wayment No</span> {/* Changed from Weight No */}
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>Account Number</span>
+                      <span>Point No</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
-                  <th className="last-th-cell">
+                  <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
-                      <span>IFSC Code</span>
+                      <span>Vehicle No</span>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Variety</span> {/* New Column */}
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Weight</span> {/* New Column */}
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span> Avg Point</span> {/* New Column */}
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Part Load</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
+                  
                 </tr>
               </thead>
               <tbody>
-                {completedPattiyals.map((payment, index) => (
-                  <tr key={payment.id} className={`tr-hover group ${selectedIds.includes(payment.id) ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]" : ""}`}>
-                    <td className="td-cell">
-                      <input type="checkbox" className="form-check" checked={selectedIds.includes(payment.id)} onChange={() => handleCheckboxChange(payment.id)} />
-                    </td>
-                    <td className="td-cell">
-                      <span className="float-left">{index + 1}</span>
-                      <span className="float-right">
-                        <i className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100"></i>
-                      </span>
-                    </td>
-                    <td className="td-cell">{payment.traderName}</td>
-                    <td className="td-cell">{payment.date}</td>
-                    <td className="td-cell">{payment.amount}</td>
-                    <td className="td-cell">{payment.bankName}</td>
-                    <td className="td-cell">{payment.accountNumber}</td>
-                    <td className="td-cell">{payment.ifscCode}</td>
-                    
-                  </tr>
+                {filteredPoints.map((Point, index) => (
+                  <tr key={Point.id} className={`tr-hover group ${selectedIds.includes(Point.id) ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]" : ""}`}>
+                  <td className="td-cell"><input type="checkbox" className="form-check" checked={selectedIds.includes(Point.id)} onChange={() => handleCheckboxChange(Point.id)} /></td>
+                  <td className="td-cell"><span className="float-left">{index + 1}</span><span className="float-right"><i className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100"></i></span></td>
+                  <td className="td-cell">{Point.date}</td>
+                  <td className="td-cell">{Point.waymentNo}</td>
+                  <td className="td-cell">{Point.PointNo}</td>
+                  <td className="td-cell">{Point.vehicleNo}</td>
+                  <td className="td-cell">{Point.variety}</td>
+                  <td className="td-cell">{Point.weight}</td>
+                  <td className="td-cell">{Point.weightAvgPoint}</td>
+                  <td className="td-cell">{Point.partLoad}</td>
+                   </tr>
                 ))}
               </tbody>
             </table>
@@ -281,14 +325,16 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
       {/* Footer */}
       <div className="bg-[#ebeff3] py-3 h-[56.9px] px-4 flex items-center justify-start">
         <span className="text-sm">
-          Showing <span className="text-red-600">{completedPattiyals.length}</span> of <span className="text-blue-600">{completedPattiyals.length}</span>
+          Showing <span className="text-red-600">{filteredPoints.length}</span> of <span className="text-blue-600">{pendingPoints.length}</span>
         </span>
       </div>
 
       {/* Filter Modal */}
       <div
         className={`fixed inset-0 z-50 flex justify-end transition-opacity duration-300 ${
-          isFilterOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          isFilterOpen
+            ? "opacity-100"
+            : "opacity-0 pointer-events-none"
         }`}
       >
         {/* Backdrop */}
@@ -305,45 +351,53 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
           {/* Header */}
           <div className="filter-header">
             <h5 className="">Add Filters</h5>
-            <button onClick={handleFilterClose} className="cursor-pointer">
+            <button
+              onClick={handleFilterClose}
+              className="cursor-pointer"
+            >
               <i className="ri-close-line"></i>
             </button>
           </div>
           {/* Scrollable Content */}
           <div className="p-4 overflow-y-auto flex-1">
             <div className="mb-4">
-              <div className="flex flex-col md:flex-row gap-2">
-                <div className="w-35">
-                  <label className="filter-label block mb-1">From Date</label>
-                  <DatePicker
-                    id="fromDate"
-                    name="trip_start_date"
-                    placeholder="Select start date"
-                    selected={fromDate}
-                    onChange={setFromDate}
-                    // Max date for "From Date" is "To Date" (if set), otherwise no max.
-                    maxDate={toDate}
-                    className="w-full"
-                  />
-                </div>
-                <div className="w-35">
-                  <label className="filter-label block mb-1">To Date</label>
-                  <DatePicker
-                    id="toDate"
-                    name="trip_end_date"
-                    placeholder="Select end date"
-                    selected={toDate}
-                    onChange={setToDate}
-                    // Min date for "To Date" is "From Date" (if set), otherwise no min.
-                    minDate={fromDate}
-                    className="w-full"
-                  />
-                </div>
-              </div>
+              <label className="filter-label">Point Number</label>
+              <input
+                type="text"
+                placeholder="Enter Point number"
+                className="form-control"
+                value={localFilters.PointNumber || ''}
+                onChange={(e) => handleFilterInputChange('PointNumber', e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="filter-label">Vehicle Number</label>
+              <input
+                type="text"
+                placeholder="Enter vehicle number"
+                className="form-control"
+                value={localFilters.vehicleNumber || ''}
+                onChange={(e) => handleFilterInputChange('vehicleNumber', e.target.value)}
+              />
+            </div>
+          
+            {/* New Filter for Variety */}
+            <div className="mb-4">
+              <label className="filter-label">Variety</label>
+              <input
+                type="text"
+                placeholder="Enter Variety"
+                className="form-control"
+                value={localFilters.variety || ''}
+                onChange={(e) => handleFilterInputChange('variety', e.target.value)}
+              />
             </div>
           </div>
           <div className="p-2 border-t border-[#dee2e6] flex justify-end gap-2">
-            <button className="btn-sm btn-light" onClick={handleClearFilters}>
+            <button
+              className="btn-sm btn-light"
+              onClick={handleClearFilters}
+            >
               Reset All
             </button>
             <button
@@ -362,4 +416,4 @@ const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   );
 };
 
-export default CompletedPaymentTable; 
+export default PendingPointTable;

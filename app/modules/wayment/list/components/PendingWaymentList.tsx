@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DatePicker from "@/app/utils/datepicker";
 import { RadioGroup } from "@/app/utils/form-controls";
-import { waymentMockData } from "@/app/JSON";
+import { waymentMockData } from "@/app/data/JSON";
 
 interface Wayment {
   id: number;

@@ -4,7 +4,7 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import Layout from "../../../components/Layout";
 import useInputValidation from "@/app/utils/inputValidations";
 import DatePicker from "@/app/utils/datepicker";
-import { paymentCustomerDetails, paymentTransactionData } from "@/app/JSON";
+import { paymentCustomerDetails, paymentTransactionData } from "@/app/data/JSON";
 
 // Type definitions
 interface BankDetails {
