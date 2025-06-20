@@ -3,6 +3,8 @@
 
 import { RadioGroup } from '@/app/utils/form-controls';
 import { useEffect, useState } from 'react';
+import {   mockPattiyalData } from "@/app/data/JSON";
+
 // Assuming DatePicker and RadioGroup are available at these paths
 // import DatePicker from '@/app/utils/datepicker';
 // import { RadioGroup } from '@/app/utils/form-controls';
@@ -53,27 +55,12 @@ const PattiyalSummary: React.FC<PattiyalSummaryProps> = ({ activeReport, activeC
       setLoading(true);
       setError(null);
 
-      // Mock data for Pattiyal as provided in AllPattiyalList
-      const mockData = [
-        { id: 1, date: "2024-01-10", weightNo: "WT101", pattiyalNo: "PT101", vehicleNo: "TN29N1212", partLoad: "Full Load", inTime: "08:30 AM", outTime: "06:45 PM", completedDate: "2024-01-12", totalAmount: "₹25,000", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer A", materialType: "TapiocaRoot", variety: "V1", netWeight: "1000kg", place: "Salem" },
-        { id: 2, date: "2024-01-11", weightNo: "WT102", pattiyalNo: "PT102", vehicleNo: "TN45Z2321", partLoad: "Partial Load", inTime: "09:15 AM", outTime: "07:30 PM", completedDate: "2024-01-13", totalAmount: "₹18,500", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer B", materialType: "Others", variety: "V2", netWeight: "750kg", place: "Namakkal" },
-        { id: 3, date: "2024-01-12", weightNo: "WT103", pattiyalNo: "PT103", vehicleNo: "TN37A5678", partLoad: "Full Load", inTime: "07:45 AM", outTime: "08:15 PM", completedDate: "2024-01-14", totalAmount: "₹32,000", paymentStatus: "Pending", deliveryStatus: "Delivered", customerName: "Customer A", materialType: "TapiocaRoot", variety: "V1", netWeight: "1200kg", place: "Erode" },
-        { id: 4, date: "2024-01-13", weightNo: "WT104", pattiyalNo: "PT104", vehicleNo: "TN10B1234", partLoad: "Partial Load", inTime: "10:00 AM", outTime: "05:30 PM", completedDate: "2024-01-15", totalAmount: "₹22,750", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer C", materialType: "Others", variety: "V3", netWeight: "900kg", place: "Karur" },
-        { id: 5, date: "2024-01-14", weightNo: "WT105", pattiyalNo: "PT105", vehicleNo: "TN11C5678", partLoad: "Full Load", inTime: "07:15 AM", outTime: "09:00 PM", completedDate: "2024-01-16", totalAmount: "₹28,900", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer B", materialType: "TapiocaRoot", variety: "V2", netWeight: "1100kg", place: "Tiruchengode" },
-        { id: 6, date: "2024-01-15", weightNo: "WT106", pattiyalNo: "PT106", vehicleNo: "TN22D9876", partLoad: "Partial Load", inTime: "08:00 AM", outTime: "07:00 PM", completedDate: "2024-01-17", totalAmount: "₹20,000", paymentStatus: "Pending", deliveryStatus: "Delivered", customerName: "Customer D", materialType: "Others", variety: "V4", netWeight: "800kg", place: "Coimbatore" },
-        { id: 7, date: "2024-01-16", weightNo: "WT107", pattiyalNo: "PT107", vehicleNo: "TN33F4321", partLoad: "Full Load", inTime: "06:45 AM", outTime: "08:30 PM", completedDate: "2024-01-18", totalAmount: "₹30,500", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer E", materialType: "TapiocaRoot", variety: "V3", netWeight: "1150kg", place: "Dindigul" },
-        { id: 8, date: "2024-01-17", weightNo: "WT108", pattiyalNo: "PT108", vehicleNo: "TN48G8765", partLoad: "Partial Load", inTime: "09:30 AM", outTime: "06:00 PM", completedDate: "2024-01-19", totalAmount: "₹19,800", paymentStatus: "Unpaid", deliveryStatus: "Pending", customerName: "Customer F", materialType: "Others", variety: "V5", netWeight: "700", place: "Dindigul" },
-        { id: 9, date: "2024-01-13", weightNo: "WT104", pattiyalNo: "PT104", vehicleNo: "TN10B1234", partLoad: "Partial Load", inTime: "10:00 AM", outTime: "05:30 PM", completedDate: "2024-01-15", totalAmount: "₹22,750", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer C", materialType: "Others", variety: "V3", netWeight: "900kg", place: "Karur" },
-        { id: 10, date: "2024-01-14", weightNo: "WT105", pattiyalNo: "PT105", vehicleNo: "TN11C5678", partLoad: "Full Load", inTime: "07:15 AM", outTime: "09:00 PM", completedDate: "2024-01-16", totalAmount: "₹28,900", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer B", materialType: "TapiocaRoot", variety: "V2", netWeight: "1100kg", place: "Tiruchengode" },
-        { id: 11, date: "2024-01-15", weightNo: "WT106", pattiyalNo: "PT106", vehicleNo: "TN22D9876", partLoad: "Partial Load", inTime: "08:00 AM", outTime: "07:00 PM", completedDate: "2024-01-17", totalAmount: "₹20,000", paymentStatus: "Pending", deliveryStatus: "Delivered", customerName: "Customer D", materialType: "Others", variety: "V4", netWeight: "800kg", place: "Coimbatore" },
-        { id: 12, date: "2024-01-16", weightNo: "WT107", pattiyalNo: "PT107", vehicleNo: "TN33F4321", partLoad: "Full Load", inTime: "06:45 AM", outTime: "08:30 PM", completedDate: "2024-01-18", totalAmount: "₹30,500", paymentStatus: "Paid", deliveryStatus: "Delivered", customerName: "Customer E", materialType: "TapiocaRoot", variety: "V3", netWeight: "1150kg", place: "Dindigul" },
-        { id: 13, date: "2024-01-17", weightNo: "WT108", pattiyalNo: "PT108", vehicleNo: "TN48G8765", partLoad: "Partial Load", inTime: "09:30 AM", outTime: "06:00 PM", completedDate: "2024-01-19", totalAmount: "₹19,800", paymentStatus: "Unpaid", deliveryStatus: "Pending", customerName: "Customer F", materialType: "Others", variety: "V5", netWeight: "700", place: "Dindigul" },
-    ];      
-      // Simulate API delay
+           
+      
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Apply filters to mockData
-      let filteredData = mockData.filter(item => {
+      let filteredData = mockPattiyalData.filter(item => {
         let match = true;
         if (filters.customerName && !item.customerName?.toLowerCase().includes(filters.customerName.toLowerCase())) {
           match = false;

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 // Assuming DatePicker and RadioGroup are available at these paths
 // import DatePicker from '@/app/utils/datepicker';
 // import { RadioGroup } from '@/app/utils/form-controls';
+import { mockWaymentData } from '@/app/data/JSON';
 
 
 // Define the Wayment interface as per AllWaymentList
@@ -43,33 +44,12 @@ const WaymentSummary: React.FC<WaymentSummaryProps> = ({ activeReport, activeCat
       setLoading(true);
       setError(null);
 
-      // Mock data for wayment as provided in AllWaymentList
-      const mockData = [
-        { id: 1, customerName: "Kumar Traders", waymentNo: "SAGO001", vehicleNo: "TN38AA1234", materialType: "Tapioca", variety: "நீலம்", netWeight: "2500 kg", place: "Salem" },
-        { id: 2, customerName: "Selvam Agencies", waymentNo: "SAGO002", vehicleNo: "TN28BB5678", materialType: "Tapioca", variety: "குண்டு", netWeight: "2300 kg", place: "Namakkal" },
-        { id: 3, customerName: "Rani Traders", waymentNo: "SAGO003", vehicleNo: "TN30CC3456", materialType: "Other", variety: "நீலம்", netWeight: "1800 kg", place: "Rasipuram" },
-        { id: 4, customerName: "Sabari Mill", waymentNo: "SAGO004", vehicleNo: "TN32DD9012", materialType: "Tapioca", variety: "குண்டு", netWeight: "2000 kg", place: "Attur" },
-        { id: 5, customerName: "Sri Sago Co.", waymentNo: "SAGO005", vehicleNo: "TN12EE8888", materialType: "Other", variety: "குண்டு", netWeight: "1900 kg", place: "Tiruchengode" },
-        { id: 6, customerName: "Vel Traders", waymentNo: "SAGO006", vehicleNo: "TN29FF1122", materialType: "Tapioca", variety: "நீலம்", netWeight: "2600 kg", place: "Edappadi" },
-        { id: 7, customerName: "Shree Mill", waymentNo: "SAGO007", vehicleNo: "TN25GG3344", materialType: "Tapioca", variety: "குண்டு", netWeight: "2200 kg", place: "Mallasamudram" },
-        { id: 8, customerName: "Sundar & Sons", waymentNo: "SAGO008", vehicleNo: "TN58HH5566", materialType: "Other", variety: "நீலம்", netWeight: "2100 kg", place: "Komarapalayam" },
-        { id: 9, customerName: "Sago Gold Traders", waymentNo: "SAGO009", vehicleNo: "TN20JJ7788", materialType: "Tapioca", variety: "நீலம்", netWeight: "2400 kg", place: "Tharamangalam" },
-        { id: 10, customerName: "Anbu Sago", waymentNo: "SAGO010", vehicleNo: "TN45KK9900", materialType: "Other", variety: "குண்டு", netWeight: "1700 kg", place: "Paramathi Velur" },
-        { id: 11, customerName: "Gopi Traders", waymentNo: "SAGO011", vehicleNo: "TN14LL1234", materialType: "Tapioca", variety: "நீலம்", netWeight: "2500 kg", place: "Puduchatram" },
-        { id: 12, customerName: "Senthil Mill", waymentNo: "SAGO012", vehicleNo: "TN11MM5678", materialType: "Other", variety: "நீலம்", netWeight: "1850 kg", place: "Konganapuram" },
-        { id: 13, customerName: "Lakshmi Traders", waymentNo: "SAGO013", vehicleNo: "TN27NN3456", materialType: "Tapioca", variety: "குண்டு", netWeight: "2750 kg", place: "Vennandur" },
-        { id: 14, customerName: "Maruthi Co.", waymentNo: "SAGO014", vehicleNo: "TN23OO9012", materialType: "Other", variety: "குண்டு", netWeight: "1950 kg", place: "Veerapandi" },
-        { id: 15, customerName: "Senthil Mill", waymentNo: "SAGO012", vehicleNo: "TN11MM5678", materialType: "Other", variety: "நீலம்", netWeight: "1850 kg", place: "Konganapuram" },
-        { id: 16, customerName: "Lakshmi Traders", waymentNo: "SAGO013", vehicleNo: "TN27NN3456", materialType: "Tapioca", variety: "குண்டு", netWeight: "2750 kg", place: "Vennandur" },
-        { id: 17, customerName: "Maruthi Co.", waymentNo: "SAGO014", vehicleNo: "TN23OO9012", materialType: "Other", variety: "குண்டு", netWeight: "1950 kg", place: "Veerapandi" },
-        { id: 18, customerName: "Bala Traders", waymentNo: "SAGO015", vehicleNo: "TN19PP8888", materialType: "Tapioca", variety: "நீலம்", netWeight: "2600 kg", place: "Sendamangalam" },
-      ];
-
+     
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Apply filters to mockData
-      let filteredData = mockData.filter(item => {
+      let filteredData = mockWaymentData.filter(item => {
         let match = true;
         if (filters.customerName && !item.customerName.toLowerCase().includes(filters.customerName.toLowerCase())) {
           match = false;
