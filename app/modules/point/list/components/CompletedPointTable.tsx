@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { dummyPoints } from "@/app/data/JSON"; // Assuming this path is correct
+import { dummyPoints } from "@/app/data/JSON";
 
 interface CompletedPoint {
   id: number;
@@ -18,7 +18,6 @@ interface CompletedPoint {
   weight: string;
   variety: string;
   weightAvgPoint: string;
-  // Add new fields for the modal's editable data
   customerName?: string;
   driverName?: string;
   noOfPartLoads?: string;
@@ -37,7 +36,9 @@ interface CompletedPointTableProps {
   onSidebarToggle: () => void;
 }
 
-const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarToggle }) => {
+const CompletedPointTable: React.FC<CompletedPointTableProps> = ({
+  onSidebarToggle,
+}) => {
   const [CompletedPoints, setCompletedPoints] = useState<CompletedPoint[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -58,14 +59,14 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
       setError(null);
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      // For demonstration, adding some dummy values for new fields
-      const updatedDummyPoints = dummyPoints.map(point => ({
+
+      const updatedDummyPoints = dummyPoints.map((point) => ({
         ...point,
         customerName: "Customer " + point.id,
         driverName: "Driver " + point.id,
         noOfPartLoads: String(Math.floor(Math.random() * 5)),
-        material: "Material " + (point.id % 3 + 1),
-        place: "Place " + (point.id % 2 + 1),
+        material: "Material " + ((point.id % 3) + 1),
+        place: "Place " + ((point.id % 2) + 1),
         remarks: "Remarks for " + point.id,
         firstWeight: (parseFloat(point.weight) + 500).toFixed(2),
         secondWeight: (parseFloat(point.weight) - 200).toFixed(2),
@@ -77,7 +78,8 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
       setCompletedPoints(updatedDummyPoints as CompletedPoint[]);
     } catch (err) {
       console.error("Error fetching Completed Points:", err);
-      const errorMessage = err instanceof Error ? err.message : "Failed to fetch Completed Points";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch Completed Points";
       setError(errorMessage);
       setCompletedPoints([]);
     } finally {
@@ -96,7 +98,9 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
   };
 
   const handleCheckboxChange = (id: number) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
   };
 
   const handleRefresh = () => {
@@ -128,32 +132,51 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
   };
 
   useEffect(() => {
-    setSelectAll(CompletedPoints.length > 0 && selectedIds.length === CompletedPoints.length);
+    setSelectAll(
+      CompletedPoints.length > 0 &&
+        selectedIds.length === CompletedPoints.length
+    );
   }, [selectedIds, CompletedPoints]);
 
   // Apply filters to the displayed data
   const filteredPoints = CompletedPoints.filter((point) => {
-    if (filters.PointNumber && !point.PointNo.toLowerCase().includes(filters.PointNumber.toLowerCase())) {
+    if (
+      filters.PointNumber &&
+      !point.PointNo.toLowerCase().includes(filters.PointNumber.toLowerCase())
+    ) {
       return false;
     }
-    if (filters.vehicleNumber && !point.vehicleNo.toLowerCase().includes(filters.vehicleNumber.toLowerCase())) {
+    if (
+      filters.vehicleNumber &&
+      !point.vehicleNo
+        .toLowerCase()
+        .includes(filters.vehicleNumber.toLowerCase())
+    ) {
       return false;
     }
     if (filters.approvalStatus) {
-      if (filters.approvalStatus === 'approved' && point.PointApproval !== 'Approved') {
+      if (
+        filters.approvalStatus === "approved" &&
+        point.PointApproval !== "Approved"
+      ) {
         return false;
       }
-      if (filters.approvalStatus === 'Completed' && point.PointApproval !== 'Completed') {
+      if (
+        filters.approvalStatus === "Completed" &&
+        point.PointApproval !== "Completed"
+      ) {
         return false;
       }
     }
-    if (filters.variety && !point.variety.toLowerCase().includes(filters.variety.toLowerCase())) {
+    if (
+      filters.variety &&
+      !point.variety.toLowerCase().includes(filters.variety.toLowerCase())
+    ) {
       return false;
     }
     return true;
   });
 
-  // Modal functions
   const openModal = (point: CompletedPoint) => {
     setEditData(point);
     setIsModalOpen(true);
@@ -161,16 +184,16 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setEditData(null); // Clear edit data when closing
+    setEditData(null);
   };
 
   const SaveEdit = () => {
     if (editData) {
-      // Find the index of the item to update
-      const index = CompletedPoints.findIndex(point => point.id === editData.id);
+      const index = CompletedPoints.findIndex(
+        (point) => point.id === editData.id
+      );
 
       if (index !== -1) {
-        // Create a new array with the updated item
         const updatedPoints = [...CompletedPoints];
         updatedPoints[index] = editData;
         setCompletedPoints(updatedPoints);
@@ -180,15 +203,18 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
     closeModal();
   };
 
-
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <div className="relative">
           <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
         </div>
-        <div className="text-lg font-medium text-gray-700">Loading Completed Points...</div>
-        <div className="text-sm text-gray-500">Please wait while we fetch the data</div>
+        <div className="text-lg font-medium text-gray-700">
+          Loading Completed Points...
+        </div>
+        <div className="text-sm text-gray-500">
+          Please wait while we fetch the data
+        </div>
       </div>
     );
   }
@@ -226,7 +252,9 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
   if (filteredPoints.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-500">No Completed Points available based on current filters.</div>
+        <div className="text-lg text-gray-500">
+          No Completed Points available based on current filters.
+        </div>
       </div>
     );
   }
@@ -250,7 +278,14 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
                 </button>
               </div>
 
-              <button className="btn-sm btn-visible-hover" id="bulkActionsBtn" onClick={() => { setSelectAll(true); setSelectedIds(CompletedPoints.map((p) => p.id)); }}>
+              <button
+                className="btn-sm btn-visible-hover"
+                id="bulkActionsBtn"
+                onClick={() => {
+                  setSelectAll(true);
+                  setSelectedIds(CompletedPoints.map((p) => p.id));
+                }}
+              >
                 <i className="ri-stack-fill mr-1"></i>
                 Bulk Actions
               </button>
@@ -275,7 +310,11 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
                 <i className="ri-delete-bin-6-line mr-1"></i>
                 Delete
               </button>
-              <button className="btn-sm btn-visible-hover" id="cancelSelectionBtn" onClick={() => setSelectedIds([])}>
+              <button
+                className="btn-sm btn-visible-hover"
+                id="cancelSelectionBtn"
+                onClick={() => setSelectedIds([])}
+              >
                 <i className="ri-close-line mr-1"></i>
                 Cancel Bulk Actions
               </button>
@@ -284,8 +323,15 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
         </div>
 
         <div className="flex items-center relative space-x-2">
-          <input className="form-control !h-[31px]" type="text" placeholder="Enter Point Number" />
-          <button className="btn-sm btn-visible-hover" onClick={handleFilterToggle}>
+          <input
+            className="form-control !h-[31px]"
+            type="text"
+            placeholder="Enter Point Number"
+          />
+          <button
+            className="btn-sm btn-visible-hover"
+            onClick={handleFilterToggle}
+          >
             <i className="ri-sort-desc"></i>
           </button>
         </div>
@@ -305,7 +351,13 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
               <thead className="sticky-table-header">
                 <tr>
                   <th className="th-cell" id="checkboxColumn">
-                    <input type="checkbox" id="selectAll" className="form-check" checked={selectAll} onChange={handleSelectAll} />
+                    <input
+                      type="checkbox"
+                      id="selectAll"
+                      className="form-check"
+                      checked={selectAll}
+                      onChange={handleSelectAll}
+                    />
                   </th>
                   <th className="th-cell">
                     <div className="flex justify-between items-center gap-1">
@@ -364,8 +416,22 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
               </thead>
               <tbody>
                 {filteredPoints.map((point, index) => (
-                  <tr key={point.id} className={`tr-hover group ${selectedIds.includes(point.id) ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]" : ""}`}>
-                    <td className="td-cell"><input type="checkbox" className="form-check" checked={selectedIds.includes(point.id)} onChange={() => handleCheckboxChange(point.id)} /></td>
+                  <tr
+                    key={point.id}
+                    className={`tr-hover group ${
+                      selectedIds.includes(point.id)
+                        ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]"
+                        : ""
+                    }`}
+                  >
+                    <td className="td-cell">
+                      <input
+                        type="checkbox"
+                        className="form-check"
+                        checked={selectedIds.includes(point.id)}
+                        onChange={() => handleCheckboxChange(point.id)}
+                      />
+                    </td>
                     <td className="td-cell">
                       <span className="float-left">{index + 1}</span>
                       <span className="float-right">
@@ -394,16 +460,15 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
       {/* Footer */}
       <div className="bg-[#ebeff3] py-3 h-[56.9px] px-4 flex items-center justify-start">
         <span className="text-sm">
-          Showing <span className="text-red-600">{filteredPoints.length}</span> of <span className="text-blue-600">{CompletedPoints.length}</span>
+          Showing <span className="text-red-600">{filteredPoints.length}</span>{" "}
+          of <span className="text-blue-600">{CompletedPoints.length}</span>
         </span>
       </div>
 
       {/* Filter Modal */}
       <div
         className={`fixed inset-0 z-50 flex justify-end transition-opacity duration-300 ${
-          isFilterOpen
-            ? "opacity-100"
-            : "opacity-0 pointer-events-none"
+          isFilterOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         {/* Backdrop */}
@@ -420,10 +485,7 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
           {/* Header */}
           <div className="filter-header">
             <h5 className="">Add Filters</h5>
-            <button
-              onClick={handleFilterClose}
-              className="cursor-pointer"
-            >
+            <button onClick={handleFilterClose} className="cursor-pointer">
               <i className="ri-close-line"></i>
             </button>
           </div>
@@ -435,8 +497,10 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
                 type="text"
                 placeholder="Enter Point number"
                 className="form-control"
-                value={localFilters.PointNumber || ''}
-                onChange={(e) => handleFilterInputChange('PointNumber', e.target.value)}
+                value={localFilters.PointNumber || ""}
+                onChange={(e) =>
+                  handleFilterInputChange("PointNumber", e.target.value)
+                }
               />
             </div>
             <div className="mb-4">
@@ -445,8 +509,10 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
                 type="text"
                 placeholder="Enter vehicle number"
                 className="form-control"
-                value={localFilters.vehicleNumber || ''}
-                onChange={(e) => handleFilterInputChange('vehicleNumber', e.target.value)}
+                value={localFilters.vehicleNumber || ""}
+                onChange={(e) =>
+                  handleFilterInputChange("vehicleNumber", e.target.value)
+                }
               />
             </div>
 
@@ -457,16 +523,15 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
                 type="text"
                 placeholder="Enter Variety"
                 className="form-control"
-                value={localFilters.variety || ''}
-                onChange={(e) => handleFilterInputChange('variety', e.target.value)}
+                value={localFilters.variety || ""}
+                onChange={(e) =>
+                  handleFilterInputChange("variety", e.target.value)
+                }
               />
             </div>
           </div>
           <div className="p-2 border-t border-[#dee2e6] flex justify-end gap-2">
-            <button
-              className="btn-sm btn-light"
-              onClick={handleClearFilters}
-            >
+            <button className="btn-sm btn-light" onClick={handleClearFilters}>
               Reset All
             </button>
             <button
@@ -488,7 +553,9 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
           <div className="bg-white rounded-[0.5rem] w-full max-w-[60%] min-h-[calc(100vh-250px)] flex flex-col custom-helvetica">
             {/* Modal Header */}
             <div className="relative border-b border-[#dee2e6] px-4 py-2 bg-[#f8f8f8] rounded-tl-md">
-              <span className="text-[16px] text-[#212529]">Edit Point Data</span>
+              <span className="text-[16px] text-[#212529]">
+                Edit Point Data
+              </span>
               <button
                 onClick={closeModal}
                 className="absolute -top-[10px] -right-[10px] text-gray-500 hover:text-gray-700 bg-[#909090] hover:bg-[#cc0000] rounded-full w-[30px] h-[30px] border-2 border-white cursor-pointer"
@@ -543,152 +610,131 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
                           </div>
                         </div>
                       </div>
-
-                      {/* Highlighted Weights - Individually Colored */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                        {/* First Weight */}
-                        <div className="p-3 rounded-lg bg-blue-50 border-l-4 border-blue-600 shadow-sm">
-                          <div className="text-xs text-gray-600">
-                            First Weight
-                          </div>
-                          <div className="text-lg font-extrabold text-black leading-tight">
-                            {editData?.firstWeight || "-"}
-                          </div>
-                        </div>
-
-                        {/* Second Weight */}
-                        <div className="p-3 rounded-lg bg-purple-50 border-l-4 border-purple-600 shadow-sm">
-                          <div className="text-xs text-gray-600">
-                            Second Weight
-                          </div>
-                          <div className="text-lg font-extrabold text-black leading-tight">
-                            {editData?.secondWeight || "-"}
-                          </div>
-                        </div>
-
-                        {/* Net Weight */}
-                        <div className="p-3 rounded-lg bg-yellow-50 border-l-4 border-yellow-500 shadow-sm">
-                          <div className="text-xs text-gray-600">
-                            Net Weight (Kgs)
-                          </div>
-                          <div className="text-lg font-extrabold text-black leading-tight">
-                            {editData?.netWeight || "-"}
-                          </div>
-                        </div>
-
-                        {/* Bill Weight */}
-                        <div className="p-3 rounded-lg bg-teal-50 border-l-4 border-teal-600 shadow-sm">
-                          <div className="text-xs text-gray-600">
-                            Bill Weight (Kgs)
-                          </div>
-                          <div className="text-lg font-extrabold text-black leading-tight">
-                            {editData?.billWeight || "-"}
-                          </div>
-                        </div>
-                      </div>
                     </div>
 
                     <div className="border-t border-gray-300 my-6"></div>
 
                     {/* Editable Fields */}
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Customer Name</label>
-                      <input
-                        type="text"
-                        value={editData?.customerName || ""}
-                        placeholder="Enter Customer Name"
-                        className="form-control capitalize text-[#000]"
-                        onChange={(e) =>
-                          setEditData({
-                            ...(editData as CompletedPoint), // Cast to CompletedPoint
-                            customerName: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Driver Name</label>
-                      <input
-                        type="text"
-                        value={editData?.driverName || ""}
-                        placeholder="Enter Driver Name"
-                        className="form-control capitalize text-[#000]"
-                        onChange={(e) =>
-                          setEditData({
-                            ...(editData as CompletedPoint),
-                            driverName: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      <div className="flex flex-col gap-4 pr-6 border-r border-gray-300">
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">Size</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Size"
+                            className="form-control capitalize text-[#000]"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1"> Weight</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Weight"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
 
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">No. of Part Loads</label>
-                      <input
-                        type="text"
-                        value={editData?.noOfPartLoads || ""}
-                        placeholder="0"
-                        className="form-control only_number text-[#000]"
-                        onChange={(e) =>
-                          setEditData({
-                            ...(editData as CompletedPoint),
-                            noOfPartLoads: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">
+                            Average Point
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter Average Point"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+                      </div>
 
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Material</label>
-                      <input
-                        type="text"
-                        value={editData?.material || ""}
-                        placeholder="Enter Material"
-                        className="form-control capitalize text-[#000]"
-                        onChange={(e) =>
-                          setEditData({ ...(editData as CompletedPoint), material: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Variety</label>
-                      <input
-                        type="text"
-                        value={editData?.variety || ""}
-                        placeholder="Enter Variety"
-                        className="form-control capitalize text-[#000] "
-                        onChange={(e) =>
-                          setEditData({ ...(editData as CompletedPoint), variety: e.target.value })
-                        }
-                      />
-                    </div>
+                      <div className="flex flex-col gap-4 pr-6 border-r border-gray-300">
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">Size</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Size"
+                            className="form-control capitalize text-[#000]"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1"> Weight</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Weight"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
 
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Place</label>
-                      <input
-                        type="text"
-                        value={editData?.place || ""}
-                        placeholder="Enter Place"
-                        className="form-control capitalize text-[#000]"
-                        onChange={(e) =>
-                          setEditData({ ...(editData as CompletedPoint), place: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <label className="form-label ms-5 w-1/2">Remarks</label>
-                      <textarea
-                        placeholder="Enter Remarks"
-                        value={editData?.remarks || ""}
-                        onChange={(e) =>
-                          setEditData({
-                            ...(editData as CompletedPoint),
-                            remarks: e.target.value,
-                          })
-                        }
-                        rows={3}
-                        className="form-control h-[40px] capitalize text-[#000] "
-                      />
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">
+                            Average Point
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter Average Point"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-4 pr-6 border-r border-gray-300">
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">Size</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Size"
+                            className="form-control capitalize text-[#000]"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1"> Weight</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Weight"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">
+                            Average Point
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter Average Point"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-4">
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">Size</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Size"
+                            className="form-control capitalize text-[#000]"
+                          />
+                        </div>
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1"> Weight</label>
+                          <input
+                            type="text"
+                            placeholder="Enter Weight"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+
+                        <div className="flex flex-col">
+                          <label className="form-label mb-1">
+                            Average Point
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter Average Point"
+                            className="form-control text-[#000]"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -697,8 +743,9 @@ const CompletedPointTable: React.FC<CompletedPointTableProps> = ({ onSidebarTogg
 
             {/* Fixed Footer Buttons */}
             <div className="sticky bottom-0 bg-[#ebeff3] h-[60px] py-3 px-4 flex justify-end space-x-4 z-10 rounded-b-lg">
-
-              <button className="btn-sm btn-primary" onClick={SaveEdit}>Save</button>
+              <button className="btn-sm btn-primary" onClick={SaveEdit}>
+                Save
+              </button>
               <button onClick={closeModal} className="btn-sm btn-secondary">
                 Cancel
               </button>
