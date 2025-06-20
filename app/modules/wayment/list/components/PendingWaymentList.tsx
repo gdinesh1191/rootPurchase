@@ -370,7 +370,7 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
 
          {isModalOpen && (
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-[0.5rem] w-full max-w-[60%] min-h-[calc(100vh-250px)] flex flex-col custom-helvetica">
+          <div className="bg-white rounded-[0.5rem] w-full max-w-[60%] min-h-[calc(100vh-90px)] flex flex-col custom-helvetica">
             {/* Modal Header */}
             <div className="relative border-b border-[#dee2e6] px-4 py-2 bg-[#f8f8f8] rounded-tl-md">
               <span className="text-[16px] text-[#212529]">Edit Wayment Data</span>
@@ -383,7 +383,7 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
             </div>
 
             {/* Modal Body */}
-            <div className="row p-[16px] m-0 flex-1 flex flex-col overflow-auto max-h-[calc(100vh-345px)]">
+            <div className="row p-[16px] m-0 flex-1 flex flex-col overflow-auto max-h-[calc(100vh-190px)]">
               <div className="grid grid-cols-12 flex-1 ">
                 <div className="col-span-12 overflow-y-auto pr-2 ">
                   <div className="space-y-6">
