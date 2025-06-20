@@ -47,10 +47,6 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
     try {
       setLoading(true);
       setError(null);
-
-      // Mock data for wayment
-    
-
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
       setWayment(waymentMockData);
@@ -120,6 +116,11 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
 
   const closeModal = () => setIsModalOpen(false);
 
+  const SaveEdit = () => {
+    console.log("Saving edited data:", EditData);
+    // Here you would typically send the updated data to your API
+    setIsModalOpen(false);
+  };
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
@@ -302,6 +303,12 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
+                  <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Bill Weight</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
                   <th className="last-th-cell">
                     <div className="flex justify-between items-center gap-1">
                       <span>Place</span>
@@ -311,11 +318,11 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                 </tr>
               </thead>
               <tbody>
-                {wayment.map((payment, index) => (
+                {wayment.map((wayment, index) => (
                   <tr
-                    key={payment.id}
+                    key={wayment.id}
                     className={`tr-hover group ${
-                      selectedIds.includes(payment.id)
+                      selectedIds.includes(wayment.id)
                         ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]"
                         : ""
                     }`}
@@ -324,26 +331,27 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                       <input
                         type="checkbox"
                         className="form-check"
-                        checked={selectedIds.includes(payment.id)}
-                        onChange={() => handleCheckboxChange(payment.id)}
+                        checked={selectedIds.includes(wayment.id)}
+                        onChange={() => handleCheckboxChange(wayment.id)}
                       />
                     </td>
                     <td className="td-cell">
                       <span className="float-left">{index + 1}</span>
                       <span
                         className="float-right"
-                        onClick={() => handleEdit(payment)}
+                        onClick={() => handleEdit(wayment)}
                       >
                         <i className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100"></i>
                       </span>
                     </td>
-                    <td className="td-cell">{payment.customerName}</td>
-                    <td className="td-cell">{payment.waymentNo}</td>
-                    <td className="td-cell">{payment.vehicleNo}</td>
-                    <td className="td-cell">{payment.materialType}</td>
-                    <td className="td-cell">{payment.variety}</td>
-                    <td className="td-cell">{payment.netWeight}</td>
-                    <td className="td-cell">{payment.place}</td>
+                    <td className="td-cell">{wayment.customerName}</td>
+                    <td className="td-cell">{wayment.waymentNo}</td>
+                    <td className="td-cell">{wayment.vehicleNo}</td>
+                    <td className="td-cell">{wayment.materialType}</td>
+                    <td className="td-cell">{wayment.variety}</td>
+                    <td className="td-cell">{wayment.netWeight}</td>
+                    <td className="td-cell">{wayment.billWeight}</td>
+                    <td className="td-cell">{wayment.place}</td>
                   </tr>
                 ))}
               </tbody>
@@ -365,7 +373,7 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
           <div className="bg-white rounded-[0.5rem] w-full max-w-[60%] min-h-[calc(100vh-250px)] flex flex-col custom-helvetica">
             {/* Modal Header */}
             <div className="relative border-b border-[#dee2e6] px-4 py-2 bg-[#f8f8f8] rounded-tl-md">
-              <span className="text-[16px] text-[#212529]">Edit</span>
+              <span className="text-[16px] text-[#212529]">Edit Wayment Data</span>
               <button
                 onClick={closeModal}
                 className="absolute -top-[10px] -right-[10px] text-gray-500 hover:text-gray-700 bg-[#909090] hover:bg-[#cc0000] rounded-full w-[30px] h-[30px] border-2 border-white cursor-pointer"
@@ -375,7 +383,7 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
             </div>
 
             {/* Modal Body */}
-            <div className="row p-[16px] m-0 flex-1 flex flex-col overflow-auto max-h-[calc(100vh-350px)]">
+            <div className="row p-[16px] m-0 flex-1 flex flex-col overflow-auto max-h-[calc(100vh-345px)]">
               <div className="grid grid-cols-12 flex-1 ">
                 <div className="col-span-12 overflow-y-auto pr-2 ">
                   <div className="space-y-6">
@@ -386,20 +394,36 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                         Summary Info
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-700">
+                      <div className="grid grid-cols-4 gap-4 text-sm text-gray-700">
                         {/* Vehicle No - Text Highlighted */}
                         <div>
                           <label className="form-label">Vehicle No</label>
-                          <p className="text-[15px] font-bold text-green-700">
+                          <p className="text-[16px] font-bold text-green-700">
                             {EditData?.vehicleNo || "-"}
                           </p>
+                        </div>
+
+                         <div>
+                          <label className="form-label">Wayment No</label>
+                          <p className="text-[16px] font-bold text-green-700">
+                            {EditData?.waymentNo || "-"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="form-label">Soil Loss (%)</label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-700 font-bold text-[16px]">
+                              {EditData?.soilLossPercentage || "-"}
+                            </span>
+                          </div>
                         </div>
 
                         {/* Material Type - Text Highlighted */}
                         <div>
                           <label className="form-label">Material Type</label>
                           <div className="flex items-center gap-2">
-                            <span className="text-green-700 font-bold text-[15px]">
+                            <span className="text-green-700 font-bold text-[16px]">
                               {EditData?.materialType || "-"}
                             </span>
                           </div>
@@ -413,7 +437,7 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                           <div className="text-xs text-gray-600">
                             First Weight
                           </div>
-                          <div className="text-lg font-extrabold text-blue-800 leading-tight">
+                          <div className="text-lg font-extrabold text-black leading-tight">
                            {EditData?.firstWeight || "-"}
                           </div>
                         </div>
@@ -423,7 +447,7 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                           <div className="text-xs text-gray-600">
                             Second Weight
                           </div>
-                          <div className="text-lg font-extrabold text-purple-800 leading-tight">
+                          <div className="text-lg font-extrabold text-black leading-tight">
                             {EditData?.secondWeight || "-"  }
                           </div>
                         </div>
@@ -433,7 +457,7 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                           <div className="text-xs text-gray-600">
                             Net Weight (Kgs)
                           </div>
-                          <div className="text-lg font-extrabold text-yellow-700 leading-tight">
+                          <div className="text-lg font-extrabold text-black leading-tight">
                             {EditData?.netWeight || "-"}
                           </div>
                         </div>
@@ -443,7 +467,7 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                           <div className="text-xs text-gray-600">
                             Bill Weight (Kgs)
                           </div>
-                          <div className="text-lg font-extrabold text-teal-800 leading-tight">
+                          <div className="text-lg font-extrabold text-black leading-tight">
                             {EditData?.billWeight || "-"}
                           </div>
                         </div>
@@ -453,14 +477,13 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                     <div className="border-t border-gray-300 my-6"></div>
 
                     {/* Editable Fields */}
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <label className="form-label">Customer Name</label>
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Customer Name</label>
                         <input
                           type="text"
                           value={EditData?.customerName || ""}
                           placeholder="Enter Customer Name"
-                          className="form-control capitalize"
+                          className="form-control capitalize text-[#000]"
                           onChange={(e) =>
                             setEditData({
                               ...EditData,
@@ -469,13 +492,13 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                           }
                         />
                       </div>
-                      <div>
-                        <label className="form-label">Driver Name</label>
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Driver Name</label>
                         <input
                           type="text"
                           value={EditData?.driverName || ""}
                           placeholder="Enter Driver Name"
-                          className="form-control capitalize"
+                          className="form-control capitalize text-[#000]"
                           onChange={(e) =>
                             setEditData({
                               ...EditData,
@@ -484,31 +507,14 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                           }
                         />
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <label className="form-label">Soil Loss (%)</label>
-                        <input
-                          type="text"
-                          value={EditData?.soilLossPercentage || ""}
-                          placeholder="e.g. 5"
-                          className="form-control only_number"
-                          onChange={(e) =>
-                            setEditData({
-                              ...EditData,
-                              soilLossPercentage: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="form-label">No. of Part Loads</label>
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">No. of Part Loads</label>
                         <input
                           type="text"
                           value={EditData?.noOfPartLoads || ""}
                           placeholder="0"
-                          className="form-control only_number"
+                          className="form-control only_number text-[#000]"
                           onChange={(e) =>
                             setEditData({
                               ...EditData,
@@ -517,50 +523,46 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                           }
                         />
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <label className="form-label">Material</label>
+                      <div  className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Material</label>
                         <input
                           type="text"
                           value={EditData?.material || ""}
                           placeholder="Enter Material"
-                          className="form-control capitalize"
+                          className="form-control capitalize text-[#000]"
                           onChange={(e) =>
                             setEditData({...EditData, material: e.target.value })
                           }
                         />
                       </div>
-                      <div>
-                        <label className="form-label">Variety</label>
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Variety</label>
                         <input
                           type="text"
                           value={EditData?.variety || ""}
                           placeholder="Enter Variety"
-                          className="form-control capitalize"
+                          className="form-control capitalize text-[#000] "
                           onChange={(e) =>
                             setEditData({...EditData, variety: e.target.value })
                           }
                         />
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <label className="form-label">Place</label>
+                      <div  className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Place</label>
                         <input
                           type="text"
                           value={EditData?.place || ""}
                           placeholder="Enter Place"
-                          className="form-control capitalize"
+                          className="form-control capitalize text-[#000]"
                           onChange={(e) =>
                             setEditData({...EditData, place: e.target.value })
                           }
                         />
                       </div>
-                      <div>
-                        <label className="form-label">Remarks</label>
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Remarks</label>
                         <textarea
                           placeholder="Enter Remarks"
                           value={EditData?.remarks || ""}
@@ -571,10 +573,9 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
                             })
                           }
                           rows={3}
-                          className="form-control h-[40px] capitalize "
+                          className="form-control h-[40px] capitalize text-[#000] "
                         />
                       </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -582,7 +583,7 @@ const AllWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) => {
 
             {/* Fixed Footer Buttons */}
             <div className="sticky bottom-0 bg-[#ebeff3] h-[60px] py-3 px-4 flex justify-end space-x-4 z-10">
-              <button className="btn-sm btn-primary">Save</button>
+              <button className="btn-sm btn-primary" onClick={SaveEdit}>Save</button>
               <button onClick={closeModal} className="btn-sm btn-secondary">
                 Cancel
               </button>

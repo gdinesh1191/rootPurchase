@@ -14,6 +14,14 @@ interface Wayment {
   variety: string;
   netWeight: string;
   place: string;
+  driverName: string;
+  material: string;
+  noOfPartLoads: string;
+  firstWeight: string;
+  secondWeight: string;
+  billWeight: string;
+  soilLossPercentage: string;
+  remarks: string;
 }
 
 interface WaymentTableProps {
@@ -32,15 +40,13 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<any>({});
   const [localFilters, setLocalFilters] = useState<any>({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [EditData, setEditData] = useState<any>(null);
 
   const fetchWayment = async () => {
     try {
       setLoading(true);
       setError(null);
-
-      // Mock data for wayment
-     
-
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
       setWayment(waymentMockData);
@@ -101,6 +107,21 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
   useEffect(() => {
     setSelectAll(wayment.length > 0 && selectedIds.length === wayment.length);
   }, [selectedIds, wayment]);
+
+
+    const handleEdit = (item: any) => {
+    console.log("Editing item:", item);
+    setEditData(item);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => setIsModalOpen(false);
+
+  const SaveEdit = () => {
+    console.log("Saving edited data:", EditData);
+    // Here you would typically send the updated data to your API
+    setIsModalOpen(false);
+  };
 
   if (loading) {
     return (
@@ -284,6 +305,12 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
                       <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
                     </div>
                   </th>
+                   <th className="th-cell">
+                    <div className="flex justify-between items-center gap-1">
+                      <span>Bill Weight</span>
+                      <i className="dropdown-icon-hover ri-arrow-down-s-fill"></i>
+                    </div>
+                  </th>
                   <th className="last-th-cell">
                     <div className="flex justify-between items-center gap-1">
                       <span>Place</span>
@@ -293,11 +320,11 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
                 </tr>
               </thead>
               <tbody>
-                {wayment.map((payment, index) => (
+                {wayment.map((wayment, index) => (
                   <tr
-                    key={payment.id}
+                    key={wayment.id}
                     className={`tr-hover group ${
-                      selectedIds.includes(payment.id)
+                      selectedIds.includes(wayment.id)
                         ? "bg-[#e5f2fd] hover:bg-[#f5f7f9]"
                         : ""
                     }`}
@@ -306,23 +333,24 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
                       <input
                         type="checkbox"
                         className="form-check"
-                        checked={selectedIds.includes(payment.id)}
-                        onChange={() => handleCheckboxChange(payment.id)}
+                        checked={selectedIds.includes(wayment.id)}
+                        onChange={() => handleCheckboxChange(wayment.id)}
                       />
                     </td>
                     <td className="td-cell">
                       <span className="float-left">{index + 1}</span>
-                      <span className="float-right">
+                      <span className="float-right" onClick={() => handleEdit(wayment)}>
                         <i className="ri-pencil-fill edit-icon opacity-0 group-hover:opacity-100"></i>
                       </span>
                     </td>
-                    <td className="td-cell">{payment.customerName}</td>
-                    <td className="td-cell">{payment.waymentNo}</td>
-                    <td className="td-cell">{payment.vehicleNo}</td>
-                    <td className="td-cell">{payment.materialType}</td>
-                    <td className="td-cell">{payment.variety}</td>
-                    <td className="td-cell">{payment.netWeight}</td>
-                    <td className="td-cell">{payment.place}</td>
+                    <td className="td-cell">{wayment.customerName}</td>
+                    <td className="td-cell">{wayment.waymentNo}</td>
+                    <td className="td-cell">{wayment.vehicleNo}</td>
+                    <td className="td-cell">{wayment.materialType}</td>
+                    <td className="td-cell">{wayment.variety}</td>
+                    <td className="td-cell">{wayment.netWeight}</td>
+                    <td className="td-cell">{wayment.billWeight}</td>
+                    <td className="td-cell">{wayment.place}</td>
                   </tr>
                 ))}
               </tbody>
@@ -338,6 +366,231 @@ const PendingWaymentList: React.FC<WaymentTableProps> = ({ onSidebarToggle }) =>
           <span className="text-blue-600">{wayment.length}</span>
         </span>
       </div>
+
+
+         {isModalOpen && (
+        <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-[0.5rem] w-full max-w-[60%] min-h-[calc(100vh-250px)] flex flex-col custom-helvetica">
+            {/* Modal Header */}
+            <div className="relative border-b border-[#dee2e6] px-4 py-2 bg-[#f8f8f8] rounded-tl-md">
+              <span className="text-[16px] text-[#212529]">Edit Wayment Data</span>
+              <button
+                onClick={closeModal}
+                className="absolute -top-[10px] -right-[10px] text-gray-500 hover:text-gray-700 bg-[#909090] hover:bg-[#cc0000] rounded-full w-[30px] h-[30px] border-2 border-white cursor-pointer"
+              >
+                <i className="ri-close-line text-white"></i>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="row p-[16px] m-0 flex-1 flex flex-col overflow-auto max-h-[calc(100vh-345px)]">
+              <div className="grid grid-cols-12 flex-1 ">
+                <div className="col-span-12 overflow-y-auto pr-2 ">
+                  <div className="space-y-6">
+                    {/* Summary Card – Redesigned */}
+                    {/* Summary Card */}
+                    <div className=" p-4 bg-white rounded-xl border border-gray-200 shadow-md">
+                      <div className="text-sm font-semibold text-gray-800 mb-3 border-b pb-2">
+                        Summary Info
+                      </div>
+
+                      <div className="grid grid-cols-4 gap-4 text-sm text-gray-700">
+                        {/* Vehicle No - Text Highlighted */}
+                        <div>
+                          <label className="form-label">Vehicle No</label>
+                          <p className="text-[16px] font-bold text-green-700">
+                            {EditData?.vehicleNo || "-"}
+                          </p>
+                        </div>
+
+                         <div>
+                          <label className="form-label">Wayment No</label>
+                          <p className="text-[16px] font-bold text-green-700">
+                            {EditData?.waymentNo || "-"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="form-label">Soil Loss (%)</label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-700 font-bold text-[16px]">
+                              {EditData?.soilLossPercentage || "-"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Material Type - Text Highlighted */}
+                        <div>
+                          <label className="form-label">Material Type</label>
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-700 font-bold text-[16px]">
+                              {EditData?.materialType || "-"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Highlighted Weights - Individually Colored */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                        {/* First Weight */}
+                        <div className="p-3 rounded-lg bg-blue-50 border-l-4 border-blue-600 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            First Weight
+                          </div>
+                          <div className="text-lg font-extrabold text-black leading-tight">
+                           {EditData?.firstWeight || "-"}
+                          </div>
+                        </div>
+
+                        {/* Second Weight */}
+                        <div className="p-3 rounded-lg bg-purple-50 border-l-4 border-purple-600 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            Second Weight
+                          </div>
+                          <div className="text-lg font-extrabold text-black leading-tight">
+                            {EditData?.secondWeight || "-"  }
+                          </div>
+                        </div>
+
+                        {/* Net Weight */}
+                        <div className="p-3 rounded-lg bg-yellow-50 border-l-4 border-yellow-500 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            Net Weight (Kgs)
+                          </div>
+                          <div className="text-lg font-extrabold text-black leading-tight">
+                            {EditData?.netWeight || "-"}
+                          </div>
+                        </div>
+
+                        {/* Bill Weight */}
+                        <div className="p-3 rounded-lg bg-teal-50 border-l-4 border-teal-600 shadow-sm">
+                          <div className="text-xs text-gray-600">
+                            Bill Weight (Kgs)
+                          </div>
+                          <div className="text-lg font-extrabold text-black leading-tight">
+                            {EditData?.billWeight || "-"}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-300 my-6"></div>
+
+                    {/* Editable Fields */}
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Customer Name</label>
+                        <input
+                          type="text"
+                          value={EditData?.customerName || ""}
+                          placeholder="Enter Customer Name"
+                          className="form-control capitalize text-[#000]"
+                          onChange={(e) =>
+                            setEditData({
+                              ...EditData,
+                              customerName: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Driver Name</label>
+                        <input
+                          type="text"
+                          value={EditData?.driverName || ""}
+                          placeholder="Enter Driver Name"
+                          className="form-control capitalize text-[#000]"
+                          onChange={(e) =>
+                            setEditData({
+                              ...EditData,
+                              driverName: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">No. of Part Loads</label>
+                        <input
+                          type="text"
+                          value={EditData?.noOfPartLoads || ""}
+                          placeholder="0"
+                          className="form-control only_number text-[#000]"
+                          onChange={(e) =>
+                            setEditData({
+                              ...EditData,
+                              noOfPartLoads: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div  className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Material</label>
+                        <input
+                          type="text"
+                          value={EditData?.material || ""}
+                          placeholder="Enter Material"
+                          className="form-control capitalize text-[#000]"
+                          onChange={(e) =>
+                            setEditData({...EditData, material: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Variety</label>
+                        <input
+                          type="text"
+                          value={EditData?.variety || ""}
+                          placeholder="Enter Variety"
+                          className="form-control capitalize text-[#000] "
+                          onChange={(e) =>
+                            setEditData({...EditData, variety: e.target.value })
+                          }
+                        />
+                      </div>
+
+                      <div  className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Place</label>
+                        <input
+                          type="text"
+                          value={EditData?.place || ""}
+                          placeholder="Enter Place"
+                          className="form-control capitalize text-[#000]"
+                          onChange={(e) =>
+                            setEditData({...EditData, place: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="mb-[10px] flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                        <label className="form-label ms-5 w-1/2">Remarks</label>
+                        <textarea
+                          placeholder="Enter Remarks"
+                          value={EditData?.remarks || ""}
+                          onChange={(e) =>
+                            setEditData({
+                              ...EditData,
+                              remarks: e.target.value,
+                            })
+                          }
+                          rows={3}
+                          className="form-control h-[40px] capitalize text-[#000] "
+                        />
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Fixed Footer Buttons */}
+            <div className="sticky bottom-0 bg-[#ebeff3] h-[60px] py-3 px-4 flex justify-end space-x-4 z-10">
+              <button className="btn-sm btn-primary" onClick={SaveEdit}>Save</button>
+              <button onClick={closeModal} className="btn-sm btn-secondary">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filter Modal */}
       <div
