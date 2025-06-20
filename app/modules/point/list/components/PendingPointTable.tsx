@@ -14,6 +14,7 @@ interface PendingPoint {
   pointApproval: string;
   rateApproval: string;
   PointApproval: string;
+  weight: string;
   variety: string; // New column
   weightAvgPoint: string; // New column
 }
